@@ -1,5 +1,5 @@
 using UnityEngine;
-//깃데스크
+
 public class PlayerController : MonoBehaviour
 {
     [Header("이동설정")]
