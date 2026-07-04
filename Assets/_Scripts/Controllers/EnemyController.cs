@@ -3,14 +3,21 @@ using UnityEngine;
 public class EnemyController : MonoBehaviour
 {
     public Transform[] waypoints; //웨이포인트 리스트
+    public Transform player; // 감시 대상
+    public float viewDistance = 5.0f; //시야 거리
+    public float veiwAngle = 90.0f; //시야각 
 
-    private int _currentWaypointIndex = 0;
+    private int _currentWaypointIndex = 0; //초기 웨이포인트
+
 
     void Update()
     {
-        Patrol();        
+        Patrol(); //순찰
+        CheckForPlayer(); //플레이어 적발
     }
 
+    //순찰 
+    //1. 웨이포인트 
     void Patrol()
     {
         if (waypoints.Length == 0) return;
@@ -39,4 +46,21 @@ public class EnemyController : MonoBehaviour
                 _currentWaypointIndex = 0;
         }
     }
+
+
+    //플레이어 적발
+    void CheckForPlayer()
+    {
+        if (player == null) return;
+
+        //emeny와 player 거리
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+
+        if(distanceToPlayer < viewDistance)  //적발 기준
+        {
+            //각도계산
+            Debug.Log("플레이어 적발!");
+        }
+    }
+
 }
