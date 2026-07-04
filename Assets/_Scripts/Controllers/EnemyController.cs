@@ -5,7 +5,7 @@ public class EnemyController : MonoBehaviour
     public Transform[] waypoints; //웨이포인트 리스트
     public Transform player; // 감시 대상
     public float viewDistance = 5.0f; //시야 거리
-    public float veiwAngle = 90.0f; //시야각 
+    public float viewAngle = 90.0f; //시야각 
 
     private int _currentWaypointIndex = 0; //초기 웨이포인트
 
@@ -56,10 +56,20 @@ public class EnemyController : MonoBehaviour
         //emeny와 player 거리
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
-        if(distanceToPlayer < viewDistance)  //적발 기준
+        //시야거리 내 플레이어가 들어왔다면?
+        if(distanceToPlayer < viewDistance)  
         {
-            //각도계산
-            Debug.Log("플레이어 적발!");
+            Vector3 directionToPlayer = player.position - transform.position;
+            directionToPlayer.y = 0; //평면상의 각도만 계산하기 위해 y무시
+
+            float angleToPlayer = Vector3.Angle(transform.forward, directionToPlayer);
+
+            //시야각의 절반보다 작다면?
+            if(angleToPlayer < viewAngle * 0.5f) 
+            {
+                Debug.Log("플레이어 적발!");
+            }
+           
         }
     }
 
