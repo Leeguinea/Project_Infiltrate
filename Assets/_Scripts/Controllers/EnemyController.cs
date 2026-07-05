@@ -6,14 +6,28 @@ public class EnemyController : MonoBehaviour
     public Transform player; // 감시 대상
     public float viewDistance = 5.0f; //시야 거리
     public float viewAngle = 90.0f; //시야각 
+    public float patrolSpeed = 1.0f;
+    public float chaseSpeed = 3.0f;
 
     private int _currentWaypointIndex = 0; //초기 웨이포인트
-
+    private enum EnemyState { Patrol, Chase }
+    private EnemyState _currentState = EnemyState.Patrol; //기본값
 
     void Update()
     {
-        Patrol(); //순찰
         CheckForPlayer(); //플레이어 적발
+        
+        switch (_currentState)
+        {
+            case EnemyState.Patrol:
+                Patrol();
+                break;
+
+            case EnemyState.Chase:
+                Chase();
+                break;
+        }
+           
     }
 
     //순찰 
@@ -31,8 +45,7 @@ public class EnemyController : MonoBehaviour
         targetPositions.y = transform.position.y;
         direction = targetPositions - transform.position;
 
-        float speed = 4.0f;
-        transform.Translate(direction.normalized * speed * Time.deltaTime, Space.World);
+        transform.Translate(direction.normalized * patrolSpeed * Time.deltaTime, Space.World);
 
         // 웨이포인트와의 거리
         float distanceToTarget = Vector3.Distance(transform.position, targetPositions);
@@ -68,9 +81,29 @@ public class EnemyController : MonoBehaviour
             if(angleToPlayer < viewAngle * 0.5f) 
             {
                 Debug.Log("플레이어 적발!");
+
+                _currentState = EnemyState.Chase;
             }
            
         }
+    }
+
+    //추적
+    void Chase()
+    {
+        if (player == null) return;
+
+        Vector3 direction = player.position - transform.position;
+        direction.y = 0;
+
+        Vector3 normorlizedDirection = direction.normalized;
+
+        if(normorlizedDirection != Vector3.zero)
+        {
+            transform.forward = normorlizedDirection;
+        }
+        
+        transform.Translate(normorlizedDirection * chaseSpeed * Time.deltaTime, Space.World);
     }
 
 }
