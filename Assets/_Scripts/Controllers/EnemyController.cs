@@ -2,26 +2,25 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-    public Transform[] waypoints; //웨이포인트 리스트
-    public Transform player; // 감시 대상
-    public float viewDistance = 5.0f; //시야 거리
-    public float viewAngle = 90.0f; //시야각 
-    public float patrolSpeed = 2.8f;
-    public float chaseSpeed = 3.5f;
+    [Header("정의된 기획 데이터 에셋")]
+    public EnemyData enemyData;
 
-    private int _currentWaypointIndex = 0; //초기 웨이포인트
+    public Transform[] waypoints; // 웨이포인트 리스트
+    public Transform player; // 감시 대상
+
+    private int _currentWaypointIndex = 0; // 초기 웨이포인트
     private enum EnemyState { Patrol, Chase }
-    private EnemyState _currentState = EnemyState.Patrol; //기본값
+    private EnemyState _currentState = EnemyState.Patrol; // 기본값
 
     void Update()
     {
-        if(GameManager.Instance != null && GameManager.Instance.IsGameOver)
+        if (GameManager.Instance != null && GameManager.Instance.IsGameOver)
         {
             return;
         }
 
-        CheckForPlayer(); //플레이어 적발
-        
+        CheckForPlayer(); // 플레이어 적발
+
         switch (_currentState)
         {
             case EnemyState.Patrol:
@@ -32,14 +31,19 @@ public class EnemyController : MonoBehaviour
                 Chase();
                 break;
         }
-           
     }
 
-    //순찰 
-    //1. 웨이포인트 
+    // 순찰 
+    // 1. 웨이포인트 
     void Patrol()
     {
         if (waypoints.Length == 0) return;
+
+        if (enemyData == null)
+        {
+            Debug.LogError($"[{name}] EnemyData 에셋이 할당되지 않았습니다! 인스펙터를 확인해주세요.");
+            return;
+        }
 
         // 현재 목적지의 위치 좌표
         Vector3 targetPositions = waypoints[_currentWaypointIndex].position;
@@ -50,7 +54,7 @@ public class EnemyController : MonoBehaviour
         targetPositions.y = transform.position.y;
         direction = targetPositions - transform.position;
 
-        transform.Translate(direction.normalized * patrolSpeed * Time.deltaTime, Space.World);
+        transform.Translate(direction.normalized * enemyData.speed * Time.deltaTime, Space.World);
 
         // 웨이포인트와의 거리
         float distanceToTarget = Vector3.Distance(transform.position, targetPositions);
@@ -65,58 +69,53 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-
-    //플레이어 적발
+    // 플레이어 적발
     void CheckForPlayer()
     {
-        if (player == null) return;
+        if (player == null || enemyData == null) return;
 
-        //emeny와 player 거리
+        // enemy와 player 거리
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
-        //시야거리 내 플레이어가 들어왔다면?
-        if(distanceToPlayer < viewDistance)  
+        if (distanceToPlayer < enemyData.viewDistance)
         {
             Vector3 directionToPlayer = player.position - transform.position;
-            directionToPlayer.y = 0; //평면상의 각도만 계산하기 위해 y무시
+            directionToPlayer.y = 0; // 평면상의 각도만 계산하기 위해 y무시
 
             float angleToPlayer = Vector3.Angle(transform.forward, directionToPlayer);
 
-            //시야각의 절반보다 작다면?
-            if(angleToPlayer < viewAngle * 0.5f) 
+            if (angleToPlayer < enemyData.viewAngle * 0.5f)
             {
                 Debug.Log("플레이어 적발!");
 
                 _currentState = EnemyState.Chase;
             }
-           
         }
     }
 
-    //추적
+    // 추적
     void Chase()
     {
-        if (player == null) return;
+        if (player == null || enemyData == null) return;
 
         Vector3 direction = player.position - transform.position;
         direction.y = 0;
 
         Vector3 normorlizedDirection = direction.normalized;
 
-        if(normorlizedDirection != Vector3.zero)
+        if (normorlizedDirection != Vector3.zero)
         {
             transform.forward = normorlizedDirection;
         }
 
-        transform.Translate(normorlizedDirection * chaseSpeed * Time.deltaTime, Space.World);
+        transform.Translate(normorlizedDirection * enemyData.speed * Time.deltaTime, Space.World);
 
-        //잡혔을 때 게임오버
+        // 잡혔을 때 게임오버
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
-        if(distanceToPlayer < 1.2f)
+        if (distanceToPlayer < 1.2f)
         {
             GameManager.Instance.TriggerGameOver();
         }
     }
-
 }
