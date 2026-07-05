@@ -6,7 +6,7 @@ public class PlayerInteraction : MonoBehaviour
     [SerializeField] private float detectionRadius = 2.0f; // 상호작용 가능한 거리
     [SerializeField] private LayerMask interactionLayer; // 미션 오브젝트를 구별할 레이어
 
-    private Interactable _currentInteractable; // 지금 내 앞에 있는 미션 오브젝트
+    private Interactable _currentInteractable; // 현재 상호작용중인 대상 (Interactable.cs 참조)
     private float _interactionTimer = 0f; // 키를 누르고 있는 시간 체크용 타이머
     private bool _isInteracting = false; // 현재 상호작용 중인가?
 
@@ -25,6 +25,12 @@ public class PlayerInteraction : MonoBehaviour
                 _isInteracting = true;
                 _interactionTimer = 0f;
                 Debug.Log($"{_currentInteractable.name} 상호작용 시작...");
+
+                if (UIManager.Instance != null)
+                {
+                    UIManager.Instance.OpenInteractionUI(_currentInteractable.interactionPrompt);
+                }
+
             }
 
             // E 키를 꾹 누르고 있는 동안
@@ -32,8 +38,13 @@ public class PlayerInteraction : MonoBehaviour
             {
                 _interactionTimer += Time.deltaTime;
 
-                // [이후 구현 예정] UIManager를 통해 화면에 슬라이더 게이지
-                Debug.Log($"진행률: {(_interactionTimer / _currentInteractable.RequiredInteractionTime) * 100f}%");
+                // UIManager
+                float currentProgress = _interactionTimer / _currentInteractable.RequiredInteractionTime;
+
+                if (UIManager.Instance != null)
+                {
+                    UIManager.Instance.UpdateInteractionProgress(currentProgress);
+                }
 
                 // 정해진 시간을 다 채웠다면?
                 if (_interactionTimer >= _currentInteractable.RequiredInteractionTime)
@@ -82,6 +93,12 @@ public class PlayerInteraction : MonoBehaviour
 
         _isInteracting = false;
         _interactionTimer = 0f;
+
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.CloseInteractionUI();
+        }
+
     }
 
     // 에디터 뷰에서 레이더 범위를 시각적으로 보기 위한 함수
