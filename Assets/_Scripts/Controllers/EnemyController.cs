@@ -6,8 +6,8 @@ public class EnemyController : MonoBehaviour
     public Transform player; // 감시 대상
     public float viewDistance = 5.0f; //시야 거리
     public float viewAngle = 90.0f; //시야각 
-    public float patrolSpeed = 1.0f;
-    public float chaseSpeed = 3.0f;
+    public float patrolSpeed = 2.8f;
+    public float chaseSpeed = 3.5f;
 
     private int _currentWaypointIndex = 0; //초기 웨이포인트
     private enum EnemyState { Patrol, Chase }
@@ -15,6 +15,11 @@ public class EnemyController : MonoBehaviour
 
     void Update()
     {
+        if(GameManager.Instance != null && GameManager.Instance.IsGameOver)
+        {
+            return;
+        }
+
         CheckForPlayer(); //플레이어 적발
         
         switch (_currentState)
@@ -102,8 +107,16 @@ public class EnemyController : MonoBehaviour
         {
             transform.forward = normorlizedDirection;
         }
-        
+
         transform.Translate(normorlizedDirection * chaseSpeed * Time.deltaTime, Space.World);
+
+        //잡혔을 때 게임오버
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+
+        if(distanceToPlayer < 1.2f)
+        {
+            GameManager.Instance.TriggerGameOver();
+        }
     }
 
 }
