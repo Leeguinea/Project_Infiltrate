@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 //좌우 회전로직
 //시야각 안에 플레이어가 있으면 발각 && 회전 정지
@@ -8,6 +9,8 @@ public class CCTVObject : MonoBehaviour
     [Header("감시 설정")]
     [SerializeField] private float _viewAngle = 90f; // 시야각
     [SerializeField] private float _viewDistance = 7.0f; //최대 감시거리(Raycast_레이저 쏘는 거리)
+    [SerializeField] private GameObject _cctvMonitorUI; // Raw Image가 있는 부모 UI (CCTV 모니터)
+    [SerializeField] private float _uiDisableDelay = 1.0f; //모니터 꺼질 때까지의 지연시간(초)
 
     [Header("레이어 설정")]
     [SerializeField] private LayerMask _targetAndObstacleMask; //.검사할 레이어(플레이어 + Obstacle)
@@ -15,9 +18,13 @@ public class CCTVObject : MonoBehaviour
     private Transform _playerTransform; //감지된 플레이어의 위치를 기억할 상자
     private bool _isPlayerInSight = false; //플레이어가 시야 안에 있는지의 여부
 
+    private Coroutine _turnOffDelayTimer; //예약 명령을 담는 타이머
+
     void Update()
     {
-        CheckPlayerVisibility();    
+        CheckPlayerVisibility();    // 플레이어 감지
+
+        HandleMonitorUI();          //모니터 UI를 코루틴을 이용해 On/Off
     }
 
     //플레이어가 영역 안에 들어오면
@@ -101,5 +108,41 @@ public class CCTVObject : MonoBehaviour
         }
     }
 
+    //CCTV 모니터 UI를 On/Off하는 함수
+    //코루틴을 이용해서 시야밖을 벗어나도 천천히 꺼지게 만듦
+    private void HandleMonitorUI()
+    {
+        if (_cctvMonitorUI == null) return;
 
+        //플레이어가 시야각 안이라면?
+        if(_isPlayerInSight)
+        {
+            //코루틴(타이머) 취소
+            if(_turnOffDelayTimer != null)
+            {
+                StopCoroutine(_turnOffDelayTimer);
+                _turnOffDelayTimer = null;
+            }
+
+            _cctvMonitorUI.SetActive(true);
+        }
+        //플레이어가 시야각을 벗어나면 -> 코루틴으로 UI를 n초 뒤에 off
+        else
+        {
+            if(_cctvMonitorUI.activeSelf && _turnOffDelayTimer == null)
+            {
+                _turnOffDelayTimer = StartCoroutine(DisableUIDelayed());
+            }
+        }
+    }
+
+    //코루틴 함수 (지정된 시간만큼 기다렸다가 ui를 off)
+    private IEnumerator DisableUIDelayed()
+    {
+        yield return new WaitForSeconds(_uiDisableDelay);
+
+        _cctvMonitorUI.SetActive(false);
+        _turnOffDelayTimer = null; // 타이머 상자 비우기
+    }
 }
+
