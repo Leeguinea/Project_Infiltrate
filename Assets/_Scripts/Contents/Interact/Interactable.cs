@@ -9,6 +9,6 @@ public class Interactable : MonoBehaviour
     //오버라이드해서 쓸 예정
     public virtual void OnInteractComplete()
     {
-        Debug.Log($"{name} 상호작용 완료!");
+        Debug.Log($"{gameObject.name} 상호작용 완료!");
     }
 }

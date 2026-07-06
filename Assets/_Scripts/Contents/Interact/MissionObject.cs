@@ -1,5 +1,7 @@
 using UnityEngine;
 
+//서류용
+
 public class MissionObject : Interactable
 {
     [Header("미션 고유 설정")]
