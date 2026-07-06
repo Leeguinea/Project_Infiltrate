@@ -92,7 +92,7 @@ public class CCTVObject : MonoBehaviour
         }
     }
 
-    private void OnDrawGizoms()
+    private void OnDrawGizmos()
     {
         if(_playerTransform != null)
         {
