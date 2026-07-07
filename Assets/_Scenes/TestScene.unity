@@ -354,7 +354,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 983
+    m_Bits: 2007
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 8400000, guid: 0a337ed524e28ab418200c9d9fdf0939, type: 2}
   m_TargetDisplay: 0
@@ -593,7 +593,8 @@ GameObject:
   - component: {fileID: 375145264}
   - component: {fileID: 375145266}
   - component: {fileID: 375145265}
-  m_Layer: 10
+  - component: {fileID: 375145267}
+  m_Layer: 11
   m_Name: DoubtPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -634,7 +635,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -659,6 +660,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 375145263}
   m_CullTransparentMesh: 1
+--- !u!114 &375145267
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 375145263}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 826163531ec69a34d9a3e858582c760d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyDoubtUI
+  _doubtPanel: {fileID: 375145263}
+  _circularGaugeImage: {fileID: 1776240698}
+  _eyeIconImage: {fileID: 907914723}
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -798,8 +814,7 @@ GameObject:
   - component: {fileID: 513678230}
   - component: {fileID: 513678229}
   - component: {fileID: 513678228}
-  - component: {fileID: 513678227}
-  m_Layer: 10
+  m_Layer: 11
   m_Name: DoubtCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -826,21 +841,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 2}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &513678227
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 513678225}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 826163531ec69a34d9a3e858582c760d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyDoubtUI
-  _doubtPanel: {fileID: 375145263}
-  _circularGaugeImage: {fileID: 1776240698}
-  _eyeIconImage: {fileID: 907914723}
 --- !u!114 &513678228
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1583,7 +1583,7 @@ GameObject:
   - component: {fileID: 907914722}
   - component: {fileID: 907914724}
   - component: {fileID: 907914723}
-  m_Layer: 10
+  m_Layer: 11
   m_Name: EyeIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2221,7 +2221,7 @@ MonoBehaviour:
   _maxdoubtValue: 100
   _increaseSpeed: 50
   _decreaseSpeed: 30
-  _myDoubtUI: {fileID: 513678227}
+  _myDoubtUI: {fileID: 375145267}
 --- !u!54 &1265536292
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2881,7 +2881,7 @@ GameObject:
   - component: {fileID: 1776240697}
   - component: {fileID: 1776240699}
   - component: {fileID: 1776240698}
-  m_Layer: 10
+  m_Layer: 11
   m_Name: GaugeImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}

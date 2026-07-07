@@ -42,7 +42,7 @@ public class EnemyDoubtUI : MonoBehaviour
     {
         if (_doubtPanel == null || _circularGaugeImage == null || _eyeIconImage == null) return;
 
-        if (currentDoubt > 0f)
+        if (currentDoubt > 0f && currentDoubt < maxDoubt)
         {
             // 의심 수치가 존재하면 UI 활성화
             if (!_doubtPanel.activeSelf) _doubtPanel.SetActive(true);
