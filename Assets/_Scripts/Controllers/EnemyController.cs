@@ -14,6 +14,8 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private float _maxdoubtValue = 100f; // 최대 의심 수치
     [SerializeField] private float _increaseSpeed = 50f; // 시야에 있을 때 초당 게이지 상승량 (2초면 풀)
     [SerializeField] private float _decreaseSpeed = 30f; // 시야에서 벗어났을 때 초당 게이지 감소량
+    [Header("자식 UI 연결")]
+    [SerializeField] private EnemyDoubtUI _myDoubtUI;
 
     private int _currentWaypointIndex = 0; // 초기 웨이포인트
 
@@ -209,12 +211,12 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    // 의심 게이지 UI
+    // 의심 게이지 UI 갱신 담당
     private void UpdateDoubtUI()
     {
-        if (UIManager.Instance != null)
+        if (_myDoubtUI != null)
         {
-            //TODO
+            _myDoubtUI.UpdateDoubtProgress(_currentDoubtValue, _maxdoubtValue);
         }
     }
 
@@ -254,5 +256,7 @@ public class EnemyController : MonoBehaviour
             Gizmos.DrawLine(transform.position, _playerTransform.position);
         }
     }
+
+   
 
 }
