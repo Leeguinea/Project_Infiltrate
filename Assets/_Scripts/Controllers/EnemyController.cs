@@ -24,7 +24,17 @@ public class EnemyController : MonoBehaviour
 
     private float _currentDoubtValue = 0f; //의심지수 (0~100)
     private bool _isPlayerInSight = false;
-    private Transform _playerTransform; 
+    private Transform _playerTransform;
+
+    private PlayerController _playerController;
+
+    void Start()
+    {
+        if (player != null)
+        {
+            _playerController = player.GetComponent<PlayerController>();
+        }
+    }
 
 
     void Update()
@@ -151,8 +161,16 @@ public class EnemyController : MonoBehaviour
                 {
                     if (hit.collider.CompareTag("Player"))
                     {
-                        _isPlayerInSight = true;
-                        return;
+                        if (_playerController != null)
+                        {
+                            //아직 추격(Chase) 상태가 아니라면?
+                            if (_currentState != EnemyState.Chase)
+                            {
+                                // 못 본 척 넘어가야 하므로 false
+                                _isPlayerInSight = false;
+                                
+                            }
+                        }
                     }
                 }
             }
