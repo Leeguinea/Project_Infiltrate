@@ -157,26 +157,23 @@ public class EnemyController : MonoBehaviour
             if (angleToPlayer < enemyData.viewAngle * 0.5f)
             {
                 RaycastHit hit;
-                if (Physics.Raycast(transform.position, directionToPlayer, out hit, enemyData.viewDistance, _targetAndObstacleMask))
+                Vector3 rayOrigin = transform.position + Vector3.up * 1f; //레이저 출발점
+                Vector3 rayDirection = (player.position + Vector3.up * 1f - rayOrigin).normalized; //레이저 방향
+
+                if(Physics.Raycast(rayOrigin, rayDirection, out hit, enemyData.viewDistance, _targetAndObstacleMask))
                 {
                     if (hit.collider.CompareTag("Player"))
                     {
-                        if (_playerController != null)
-                        {
-                            //아직 추격(Chase) 상태가 아니라면?
-                            if (_currentState != EnemyState.Chase)
-                            {
-                                // 못 본 척 넘어가야 하므로 false
-                                _isPlayerInSight = false;
-                                
-                            }
-                        }
+                        _isPlayerInSight = true;
+                        return;
                     }
                 }
             }
         }
 
+        //위의 모든 검사(거리, 각도, 레이캐스트)를 통과하지 못했을 때만 플레이어를 놓친 것으로 판단
         _isPlayerInSight = false;
+
     }
 
 
