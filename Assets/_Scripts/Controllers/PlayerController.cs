@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour
     [Header("벽 엄폐(cover) 설정")]
     [SerializeField] private LayerMask _wallMask; //인스펙터에서 'Wall' 레이어 변수
     [SerializeField] private float _maxCoverDistance = 1.5f; //벽을 감지할 최대거리
-    
+
     private bool _isCoverd = false; //현재 벽에 붙은 상태인지
     private Vector3 _wallNormal;
 
@@ -34,7 +34,7 @@ public class PlayerController : MonoBehaviour
     {
         Crouch();
 
-        if(Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             ToggleCover();
         }
@@ -43,34 +43,34 @@ public class PlayerController : MonoBehaviour
         if (_isCoverd)
         {
             MoveAlongWall();
-            return;
+            return; // 엄폐 중일 때 아래쪽 평상시 이동이 같이 실행되지 않도록 차단
         }
 
 
         //키보드 입력 받기
         float moveX = Input.GetAxisRaw("Horizontal");
         float moveZ = Input.GetAxisRaw("Vertical");
-        
+
         //이동 방향 계산
         Vector3 moveDirection = new Vector3(moveX, 0f, moveZ).normalized;
 
         //입력이 있을 때만 이동 및 회전 처리
-        if(moveDirection.magnitude > 0.1f)
+        if (moveDirection.magnitude > 0.1f)
         {
             transform.forward = moveDirection;
 
             characterController.Move(moveDirection * moveSpeed * Time.deltaTime);
         }
-        
+
     }
 
     // C 버튼을 누르면 앉기 + 서기 상태로 변경됨 (물리적 높이를 바꿈)
     private void Crouch()
     {
-        if(Input.GetKeyDown(KeyCode.C))
+        if (Input.GetKeyDown(KeyCode.C))
         {
             //서 있는 상태(컨트롤러 높이가 원래 높이와 비슷하다면) -> 앉은 상태 
-            if(characterController.height  > _crouchHeight + 0.1f)
+            if (characterController.height > _crouchHeight + 0.1f)
             {
                 characterController.height = _crouchHeight;
                 characterController.center = new Vector3(0f, _crouchHeight * 0.5f, 0f);
@@ -84,14 +84,47 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    //1. 벽에 은폐중일 때 좌우로만 움직임
+    //2. 벽 끝에 도달했다면 더이상 못감.
+    private void MoveAlongWall()
+    {
+        float hInput = Input.GetAxisRaw("Horizontal");
+        if (Mathf.Abs(hInput) < 0.1f) return;
+
+        // 외적 공식으로 벽의 우측 방향 벡터 추출
+        Vector3 wallRight = Vector3.Cross(_wallNormal, Vector3.up).normalized;
+        Vector3 moveDirection = wallRight * hInput;
+
+        RaycastHit edgeHit;
+
+        // 내가 잠시 후 이동할 '조금 앞선 위치' 계산 (반지름 0.4f 만큼 앞)
+        Vector3 futurePosition = transform.position + (moveDirection * 0.4f) + (Vector3.up * 1f);
+
+        // 미래의 위치에서 벽 쪽을 향해 레이저를 쐈을 때 벽이 없다면? -> 이동하지 않고 리턴(멈춤)
+        if (!Physics.Raycast(futurePosition, -_wallNormal, out edgeHit, 1.0f, _wallMask))
+        {
+            return;
+        }
+
+        // 벽이 아직 남아있는 안전한 경우에만 이동 처리
+        float coverMoveSpeed = moveSpeed * 0.5f;
+        characterController.Move(moveDirection * coverMoveSpeed * Time.deltaTime);
+    }
+
     //스페이스바를 누르면 벽에 엄폐
     private void ToggleCover()
     {
         //만약 이미 벽에 엄폐중이라면? ->염폐 해제
-        if(_isCoverd)
+        if (_isCoverd)
         {
             _isCoverd = false;
-            Debug.Log("벽 어폐 해제!");
+
+            //엄폐 해제 시 벽에서 살짝 떨어짐
+            Vector3 detachPosition = transform.position + _wallNormal * 0.3f;
+            detachPosition.y = transform.position.y;
+            transform.position = detachPosition;
+
+            Debug.Log("벽 엄폐 해제!");
             return;
         }
 
@@ -101,7 +134,7 @@ public class PlayerController : MonoBehaviour
         //가슴 높이에서 ray
         Vector3 rayOrigin = transform.position + Vector3.up * 1f;
 
-        if(Physics.Raycast(rayOrigin, transform.forward, out hit, _maxCoverDistance, _wallMask))
+        if (Physics.Raycast(rayOrigin, transform.forward, out hit, _maxCoverDistance, _wallMask))
         {
             _isCoverd = true;
             _wallNormal = hit.normal;
@@ -117,35 +150,5 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    //벽에 은폐중일 때 좌우로만 움직이게 하는 함수
-    private void MoveAlongWall()
-    {
-        //좌우(수평)만 가능
-        float hInput = Input.GetAxisRaw("Horizontal");
-
-        //입력이 엇으면 계산없이 멈춤
-        if (Mathf.Abs(hInput) < 0.1f) return;
-
-        //하늘 방향과 벽이 정면 방향을 외적하여 "벽의 오른쪽 방향 벡터"추출
-        Vector3 wallRight = Vector3.Cross(_wallNormal, Vector3.up).normalized;
-
-        //wallRight: 오른쪽을 누르면 +1, 왼쪽을 누르면 -1
-        Vector3 moveDirection = wallRight * hInput;
-
-        RaycastHit edgeHit;
-
-        //벽의 끝을 감지하기 위해서 '조금 앞선 위치'를 계산하고, 레이저가 벽을 맞추지 못하면 벽이 끝난 것이라고 판단.
-        Vector3 futurePosition = transform.position + (moveDirection * 0.4f) + (Vector3.up * 1f);
-        if(!Physics.Raycast(futurePosition, -_wallNormal, out edgeHit, 1.0f, _wallMask))
-        {
-            return;
-        }
-
-        //벽이 남았으면 진행
-        float coverMoveSpeed = moveSpeed * 0.5f;
-        characterController.Move(moveDirection * coverMoveSpeed * Time.deltaTime);
-
-    }
-
-
+    
 }
