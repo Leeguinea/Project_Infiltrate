@@ -39,8 +39,12 @@ public class PlayerController : MonoBehaviour
             ToggleCover();
         }
 
-        //만약 벽에 엄폐중이라면 평상시 이동을 막아버림(TODO 벽에서 좌우로만 움직일 수 있음)
-        if (_isCoverd) return;
+        //만약 벽에 엄폐중이라면 좌우(a,d)만 가능
+        if (_isCoverd)
+        {
+            MoveAlongWall();
+            return;
+        }
 
 
         //키보드 입력 받기
@@ -112,5 +116,26 @@ public class PlayerController : MonoBehaviour
         }
 
     }
+
+    //벽에 은폐중일 때 좌우로만 움직이게 하는 함수
+    private void MoveAlongWall()
+    {
+        //좌우(수평)만 가능
+        float hInput = Input.GetAxisRaw("Horizontal");
+
+        //입력이 엇으면 계산없이 멈춤
+        if (Mathf.Abs(hInput) < 0.1f) return;
+
+        //하늘 방향과 벽이 정면 방향을 외적하여 "벽의 오른쪽 방향 벡터"추출
+        Vector3 wallRight = Vector3.Cross(_wallNormal, Vector3.up).normalized;
+
+        //wallRight: 오른쪽을 누르면 +1, 왼쪽을 누르면 -1
+        Vector3 moveDirection = wallRight * hInput;
+
+        float coverMoveSpeed = moveSpeed * 0.5f;
+        characterController.Move(moveDirection * coverMoveSpeed * Time.deltaTime);
+
+    }
+
 
 }

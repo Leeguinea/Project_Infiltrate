@@ -354,7 +354,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 2007
+    m_Bits: 6103
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 8400000, guid: 0a337ed524e28ab418200c9d9fdf0939, type: 2}
   m_TargetDisplay: 0
@@ -1378,6 +1378,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   moveSpeed: 5
+  _normalHeight: 2
+  _crouchHeight: 1
+  _wallMask:
+    serializedVersion: 2
+    m_Bits: 4096
+  _maxCoverDistance: 1.5
 --- !u!136 &838198323
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -2640,7 +2646,7 @@ GameObject:
   - component: {fileID: 1746908484}
   - component: {fileID: 1746908483}
   - component: {fileID: 1746908482}
-  m_Layer: 7
+  m_Layer: 12
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
