@@ -132,6 +132,16 @@ public class PlayerController : MonoBehaviour
         //wallRight: 오른쪽을 누르면 +1, 왼쪽을 누르면 -1
         Vector3 moveDirection = wallRight * hInput;
 
+        RaycastHit edgeHit;
+
+        //벽의 끝을 감지하기 위해서 '조금 앞선 위치'를 계산하고, 레이저가 벽을 맞추지 못하면 벽이 끝난 것이라고 판단.
+        Vector3 futurePosition = transform.position + (moveDirection * 0.4f) + (Vector3.up * 1f);
+        if(!Physics.Raycast(futurePosition, -_wallNormal, out edgeHit, 1.0f, _wallMask))
+        {
+            return;
+        }
+
+        //벽이 남았으면 진행
         float coverMoveSpeed = moveSpeed * 0.5f;
         characterController.Move(moveDirection * coverMoveSpeed * Time.deltaTime);
 
