@@ -1971,6 +1971,7 @@ MonoBehaviour:
   _viewDistance: 7
   _cctvMonitorUI: {fileID: 796967684}
   _uiDisableDelay: 1
+  _detectionDelay: 3
   _targetAndObstacleMask:
     serializedVersion: 2
     m_Bits: 192
@@ -2228,6 +2229,7 @@ MonoBehaviour:
   _increaseSpeed: 50
   _decreaseSpeed: 30
   _myDoubtUI: {fileID: 375145267}
+  _surpriseDuration: 3
 --- !u!54 &1265536292
 Rigidbody:
   m_ObjectHideFlags: 0

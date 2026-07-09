@@ -12,6 +12,11 @@ public class CCTVObject : MonoBehaviour
     [SerializeField] private GameObject _cctvMonitorUI; // Raw Image가 있는 부모 UI (CCTV 모니터)
     [SerializeField] private float _uiDisableDelay = 1.0f; //모니터 꺼질 때까지의 지연시간(초)
 
+    [Header("발각 지연 설정")]
+    [SerializeField] private float _detectionDelay = 3.0f;  //n초 동안 노출되어야 적 호출
+    private float _detectionTimer = 0f;
+    private bool _hasCalledEnemy = false; //적을 호출했는지 여부
+
     [Header("레이어 설정")]
     [SerializeField] private LayerMask _targetAndObstacleMask; //.검사할 레이어(플레이어 + Obstacle)
 
@@ -19,12 +24,37 @@ public class CCTVObject : MonoBehaviour
     private bool _isPlayerInSight = false; //플레이어가 시야 안에 있는지의 여부
 
     private Coroutine _turnOffDelayTimer; //예약 명령을 담는 타이머
+    private EnemyController _assignedEnemy = null;
 
     void Update()
     {
         CheckPlayerVisibility();    // 플레이어 감지
 
-        HandleMonitorUI();          //모니터 UI를 코루틴을 이용해 On/Off
+        if (_isPlayerInSight)
+        {
+            if (!_hasCalledEnemy)
+            {
+                _detectionTimer += Time.deltaTime;
+
+                // 설정한 시간을 넘기는 순간 호출
+                if (_detectionTimer >= _detectionDelay)
+                {
+                    _hasCalledEnemy = true; // 중복 호출 방지용
+                    Debug.Log(" cctv 발각, 경비원을 호출합니다!");
+                    CallClosestEnemy(); // 가장 가까운 경비원 호출
+                }
+            }
+        }
+        else
+        {
+            // 플레이어가 숨거나 사각지대로 벗어나면 리셋.
+            if (!_hasCalledEnemy)
+            {
+                _detectionTimer = 0f;
+            }
+        }
+
+        HandleMonitorUI();
     }
 
     //플레이어가 영역 안에 들어오면
@@ -41,10 +71,14 @@ public class CCTVObject : MonoBehaviour
     //플레이어가 영역(센서)에서 나가면
     private void OnTriggerExit(Collider other)
     {
-        if(other.CompareTag("Player"))
+        if (other.CompareTag("Player"))
         {
-            _playerTransform = null; //플레이어 위치 삭제
+            _playerTransform = null;
             _isPlayerInSight = false;
+            _assignedEnemy = null;
+
+            _detectionTimer = 0f;
+            _hasCalledEnemy = false;
             Debug.Log("침입자 없음");
         }
     }
@@ -83,7 +117,8 @@ public class CCTVObject : MonoBehaviour
                     if (_isPlayerInSight)
                     {
                         _isPlayerInSight = false;
-                        Debug.Log("플레이어가 시야각 안에 있지만, 장애물 뒤에 엄폐되어 발각안됨");
+                        _assignedEnemy = null;
+                        Debug.Log("안들킴. 플레이어가 시야각 안에 있지만, 장애물 뒤에 엄폐되어 발각안됨");
                     }
                 }
             }
@@ -98,6 +133,41 @@ public class CCTVObject : MonoBehaviour
             }
         }
     }
+
+    private void CallClosestEnemy()
+    {
+        //TODO: 더 효율적인 게 있다면 수정
+        EnemyController[] allEnemies = FindObjectsByType<EnemyController>();
+
+        //TODO: 일단 최소 거리는 무한대로 (나중에 일정거리로 제한 할 수도 있음)
+        if (allEnemies.Length == 0) return;
+        
+        EnemyController closestEnemy = null;
+        float shortestDistance = Mathf.Infinity;
+
+        // CCTV 자신의 위치(transform.position) 기준 가장 가까운 적을 연산
+        foreach (EnemyController enemy in allEnemies)
+        {
+            float distanceToEnemy = Vector3.Distance(transform.position, enemy.transform.position);
+
+            if (distanceToEnemy < shortestDistance)
+            {
+                shortestDistance = distanceToEnemy;
+                closestEnemy = enemy;
+
+            }
+        }
+
+        // 찾아낸 단 한 마리의 적에게만 추격 명령을 전달.
+        if (closestEnemy != null)
+        {
+            _assignedEnemy = closestEnemy;
+            Debug.Log($"[CCTV 포착] 가장 가까운 경비원 [{_assignedEnemy.name}]을 즉시 출동시킵니다.");
+            _assignedEnemy.CCTVCommandChase(); // EnemyController 내부의 무전 수신 함수 호출
+        }
+        
+    }
+
 
     private void OnDrawGizmos()
     {

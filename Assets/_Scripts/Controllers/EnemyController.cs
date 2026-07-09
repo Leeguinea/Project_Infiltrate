@@ -19,8 +19,12 @@ public class EnemyController : MonoBehaviour
 
     private int _currentWaypointIndex = 0; // 초기 웨이포인트
 
-    private enum EnemyState { Patrol, Chase, Doubt }
+    private enum EnemyState { Patrol, Chase, Doubt, Surprise }
     private EnemyState _currentState = EnemyState.Patrol; // 기본값
+
+    [Header("경직 시스템 설정")]
+    [SerializeField] private float _surpriseDuration = 3.0f; // 경직 시간
+    private float _surpriseTimer = 0f; // 경직 누적 타이머
 
     private float _currentDoubtValue = 0f; //의심지수 (0~100)
     private bool _isPlayerInSight = false;
@@ -55,6 +59,10 @@ public class EnemyController : MonoBehaviour
 
             case EnemyState.Doubt:
                 LookAtPlayer(); //추척하지 않고, 자리에 멈춰 플레이어 주시
+                break;
+
+            case EnemyState.Surprise:
+                HandleSurpriseState();
                 break;
 
             case EnemyState.Chase:
@@ -133,6 +141,20 @@ public class EnemyController : MonoBehaviour
         }
     }
 
+    // cctv 호출을 받고 경직되는 시간을 재는 함수
+    private void HandleSurpriseState()
+    {
+        _surpriseTimer += Time.deltaTime;
+
+        // n초가 지나면?
+        if (_surpriseTimer >= _surpriseDuration)
+        {
+            Debug.Log($"[{name}]: 침입자를 추격한다!");
+            _surpriseTimer = 0f; // 타이머 초기화
+            _currentState = EnemyState.Chase; 
+        }
+    }
+
 
     // 시야 체크(플레이어 적발 기준) + 레이캐스트(장애물)
     private void CheckForPlayerVisibilty()
@@ -180,8 +202,8 @@ public class EnemyController : MonoBehaviour
     // 의심 게이지 계산 및 상태 머신 흐름 통제 
     private void HandleDoubtGauge()
     {
-        //이미 들켜서 추적 중일 때는 의심 계산 안함
-        if (_currentState == EnemyState.Chase) return;
+        // 이미 추적 중 or 경직 상태면 HandleDoubtGauge()함수 패스
+        if (_currentState == EnemyState.Chase || _currentState == EnemyState.Surprise) return;
 
         // 시야에 있으면?
         if (_isPlayerInSight)
@@ -262,6 +284,21 @@ public class EnemyController : MonoBehaviour
             _isPlayerInSight = false;
         }
     }
+
+    // CCTV가 경비원(Enemy, 나) 지목해서 호출할 때 실행되는 수신 함수
+    // 외부(CCTVObject)에서 호출
+    public void CCTVCommandChase()
+    {
+        // 현재 경비원이 이미 추격(Chase) 중이 아니라면?
+        if (_currentState != EnemyState.Chase && _currentState != EnemyState.Surprise)
+        {
+            Debug.Log($"[{name}]: CCTV 무전을 받았다! 엇?! 무슨 일이지? (n초간 정지)");
+
+            _surpriseTimer = 0f; 
+            _currentState = EnemyState.Surprise; 
+        }
+    }
+
 
     private void OnDrawGizmos()
     {
