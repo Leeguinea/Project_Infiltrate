@@ -14,8 +14,10 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private float _maxdoubtValue = 100f; // 최대 의심 수치
     [SerializeField] private float _increaseSpeed = 50f; // 시야에 있을 때 초당 게이지 상승량 (2초면 풀)
     [SerializeField] private float _decreaseSpeed = 30f; // 시야에서 벗어났을 때 초당 게이지 감소량
+    
     [Header("자식 UI 연결")]
     [SerializeField] private EnemyDoubtUI _myDoubtUI;
+    [SerializeField] private GameObject _surpriseUI;
 
     private int _currentWaypointIndex = 0; // 초기 웨이포인트
 
@@ -152,6 +154,11 @@ public class EnemyController : MonoBehaviour
             Debug.Log($"[{name}]: 침입자를 추격한다!");
             _surpriseTimer = 0f; // 타이머 초기화
             _currentState = EnemyState.Chase; 
+
+            if(_surpriseUI != null)
+            {
+                _surpriseUI.SetActive(false);
+            }
         }
     }
 
@@ -296,6 +303,12 @@ public class EnemyController : MonoBehaviour
 
             _surpriseTimer = 0f; 
             _currentState = EnemyState.Surprise; 
+
+            //느낌표 UI
+            if(_surpriseUI != null)
+            {
+                _surpriseUI.SetActive(true);
+            }
         }
     }
 
