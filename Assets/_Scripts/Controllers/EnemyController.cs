@@ -19,7 +19,13 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private EnemyDoubtUI _myDoubtUI;
     [SerializeField] private GameObject _surpriseUI;
 
+    [Header("순찰 설정")]
+    [SerializeField] private float _patrolWaitDuration = 5f;
+
     private int _currentWaypointIndex = 0; // 초기 웨이포인트
+    private float _patrolWaitTimer = 0f; //대기 시간 타이머
+    private bool _isWaitingAtWaypoint = false; //현재 멈춰서 대기중인가?
+
 
     private enum EnemyState { Patrol, Chase, Doubt, Surprise }
     private EnemyState _currentState = EnemyState.Patrol; // 기본값
@@ -78,6 +84,28 @@ public class EnemyController : MonoBehaviour
     // 1. 웨이포인트 
     private void Patrol()
     {
+        //만약 웨이포인트에서 대기중인 상태라면?
+        if(_isWaitingAtWaypoint)
+        {
+            _patrolWaitTimer += Time.deltaTime;
+
+            //계획한 시간이 지나면?
+            if(_patrolWaitTimer >= _patrolWaitDuration)
+            {
+                _isWaitingAtWaypoint = false;
+                _patrolWaitTimer = 0f;
+
+                _currentWaypointIndex++;
+                if (_currentWaypointIndex >= waypoints.Length)
+                {
+                    _currentWaypointIndex = 0;
+                }
+            }
+
+            return; //대기 중일 때는 아래의 순찰과정x
+        }
+
+        //순찰
         if (waypoints.Length == 0) return;
 
         if (enemyData == null)
@@ -109,10 +137,10 @@ public class EnemyController : MonoBehaviour
         // 도착 판정 범위
         if (distanceToTarget < 0.5f)
         {
-            _currentWaypointIndex++;
+            _isWaitingAtWaypoint = true;
+            _patrolWaitTimer = 0f;
 
-            if (_currentWaypointIndex >= waypoints.Length)
-                _currentWaypointIndex = 0;
+            Debug.Log($"[{name}]: 웨이포인트에 도착! {{_patrolWaitDuration}}초 동안 멈춰서 정찰합니다.");
         }
     }
 
