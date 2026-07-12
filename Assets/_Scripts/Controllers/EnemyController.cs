@@ -26,7 +26,6 @@ public class EnemyController : MonoBehaviour
     private float _patrolWaitTimer = 0f; //대기 시간 타이머
     private bool _isWaitingAtWaypoint = false; //현재 멈춰서 대기중인가?
 
-
     private enum EnemyState { Patrol, Chase, Doubt, Surprise }
     private EnemyState _currentState = EnemyState.Patrol; // 기본값
 
@@ -42,6 +41,10 @@ public class EnemyController : MonoBehaviour
 
     [Header("상호작용 UI")]
     [SerializeField] private GameObject _actionPromptCanvas; //Enemy > ActionPromptCanvas 연결용
+
+    [Header("시체 운반용 컴포넌트")]
+    private Rigidbody _enemyRigidbody;
+
 
     void Start()
     {
@@ -97,6 +100,35 @@ public class EnemyController : MonoBehaviour
         if (_surpriseUI != null) _surpriseUI.SetActive(false);
     }
 
+    //플레이어가 시체를 붙잡을 떄
+    public void CarryBody(Transform playerTransform)
+    {
+        //플레이어의 자식으로 들어가게 함.
+        transform.SetParent(playerTransform);
+        transform.localPosition = new Vector3(0f, -0.5f, -0.8f);
+
+        //정면이 하늘을 보게 함
+        transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
+
+        //리지드바디 잠깐 꺼주기 (끌려다니는 동안 물리 충돌로 버벅거리지 않게 하려고)
+        if(GetComponent<Rigidbody>() != null)
+        {
+            GetComponent<Rigidbody>().isKinematic = true;
+        }
+    }
+
+    //플레이어가 시체를 놓을 때
+    public void DropBody()
+    {
+        transform.SetParent(null);
+
+        if (GetComponent<Rigidbody>() != null)
+        {
+            GetComponent<Rigidbody>().isKinematic = false;
+        }
+
+        transform.position = new Vector3(transform.position.x, 0.1f, transform.position.z);
+    }
 
 
     // [상태1] 순찰 Patrol
