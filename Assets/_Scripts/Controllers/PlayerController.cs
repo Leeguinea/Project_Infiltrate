@@ -29,6 +29,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _assassinateDistance = 1.5f; //암살 가능 거리
     [SerializeField] private LayerMask _enemyLayer;
 
+    private EnemyController _lastDetectedEnemy = null; // 직전 프레임에 감지했던 적 기억용 변수
+
 
     void Start()
     {
@@ -162,25 +164,45 @@ public class PlayerController : MonoBehaviour
     private void CheckForAssassination()
     {
         Collider[] hitEnemies = Physics.OverlapSphere(transform.position, _assassinateDistance, _enemyLayer);
+        EnemyController currentTargetEnemy = null;
 
         foreach (var enemyCollider in hitEnemies)
         {
-            EnemyController enemy = enemyCollider.GetComponent<EnemyController>(); //Enemy!
+            EnemyController enemy = enemyCollider.GetComponent<EnemyController>();
             if (enemy != null && enemy.enabled)
             {
                 if (IsBehindEnemy(enemy))
                 {
-                    //TODO: [E]암살하기와 같은 텍스트 UI
-
-                    Debug.Log("암살 가능 범위 진입! E키를 누르세요.");
-
-                    if (Input.GetKeyDown(KeyCode.E))
-                    {
-                        enemy.TakeAssassination(); // 적 제압 함수 호출
-                        return;
-                    }
+                    currentTargetEnemy = enemy; // 암살 가능한 대상을 찾음
+                    break;
                 }
             }
+        }
+
+        // 감지 대상이 바뀌었을 때의 처리
+        if (currentTargetEnemy != _lastDetectedEnemy)
+        {
+            // 1. 이전에 감지하던 적이 있다면 그 적의 UI를 off
+            if (_lastDetectedEnemy != null)
+            {
+                _lastDetectedEnemy.ToggleActionPrompt(false);
+            }
+
+            // 2. 새로 감지된 적이 있다면 그 적의 UI를 on
+            if (currentTargetEnemy != null)
+            {
+                currentTargetEnemy.ToggleActionPrompt(true);
+            }
+
+            _lastDetectedEnemy = currentTargetEnemy; // 현재 적 기억
+        }
+
+        // 3. E키 입력 처리
+        if (currentTargetEnemy != null && Input.GetKeyDown(KeyCode.E))
+        {
+            currentTargetEnemy.ToggleActionPrompt(false); // UI 끄기
+            currentTargetEnemy.TakeAssassination();       // 적 제압
+            _lastDetectedEnemy = null;
         }
     }
 

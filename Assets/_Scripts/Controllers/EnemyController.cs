@@ -40,6 +40,9 @@ public class EnemyController : MonoBehaviour
 
     private PlayerController _playerController;
 
+    [Header("상호작용 UI")]
+    [SerializeField] private GameObject _actionPromptCanvas; //Enemy > ActionPromptCanvas 연결용
+
     void Start()
     {
         if (player != null)
@@ -366,6 +369,13 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-   
+    // 플레이어가 암살 범위에 들어오면 UI를 켜고 끄는 함수
+    public void ToggleActionPrompt(bool isActive)
+    {
+        if (_actionPromptCanvas != null && this.enabled) // 죽은 적은 작동 안 함
+        {
+            _actionPromptCanvas.SetActive(isActive);
+        }
+    }
 
 }
