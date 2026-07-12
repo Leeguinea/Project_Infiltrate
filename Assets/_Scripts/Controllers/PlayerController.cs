@@ -25,6 +25,11 @@ public class PlayerController : MonoBehaviour
     private bool _isCoverd = false; //현재 벽에 붙은 상태인지
     private Vector3 _wallNormal;
 
+    [Header("암살 설정")]
+    [SerializeField] private float _assassinateDistance = 1.5f; //암살 가능 거리
+    [SerializeField] private LayerMask _enemyLayer;
+
+
     void Start()
     {
         characterController = GetComponent<CharacterController>();
@@ -33,6 +38,7 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         Crouch();
+        CheckForAssassination();
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -61,6 +67,8 @@ public class PlayerController : MonoBehaviour
 
             characterController.Move(moveDirection * moveSpeed * Time.deltaTime);
         }
+
+        
 
     }
 
@@ -150,5 +158,41 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    
+
+    private void CheckForAssassination()
+    {
+        Collider[] hitEnemies = Physics.OverlapSphere(transform.position, _assassinateDistance, _enemyLayer);
+
+        foreach (var enemyCollider in hitEnemies)
+        {
+            EnemyController enemy = enemyCollider.GetComponent<EnemyController>(); //Enemy!
+            if (enemy != null && enemy.enabled)
+            {
+                if (IsBehindEnemy(enemy))
+                {
+                    //TODO: [E]암살하기와 같은 텍스트 UI
+
+                    Debug.Log("암살 가능 범위 진입! E키를 누르세요.");
+
+                    if (Input.GetKeyDown(KeyCode.E))
+                    {
+                        enemy.TakeAssassination(); // 적 제압 함수 호출
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    //적의 뒤통수에 있는지 판별
+    private bool IsBehindEnemy(EnemyController enemy)
+    {
+        Vector3 enemyForward = enemy.transform.forward;
+        Vector3 dirToPlayer = (transform.position - enemy.transform.position).normalized;
+
+        float angle = Vector3.Angle(enemyForward, dirToPlayer);
+
+        //120도 보다 크다면 적의 뒤에 플레이어가 있다고 판단.
+        return angle > 120f;
+    }
 }

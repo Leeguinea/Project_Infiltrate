@@ -80,6 +80,22 @@ public class EnemyController : MonoBehaviour
         }
     }
 
+    public void TakeAssassination()
+    {
+        Debug.Log($"[{name}]: 적이 뒤에서 기습당해 제압되었다!");
+
+        //TODO: 애니메이션으로 교체하고 아래 코드 삭제
+        transform.rotation = Quaternion.Euler(90f, transform.eulerAngles.y, transform.eulerAngles.z);
+        transform.position = new Vector3(transform.position.x, transform.position.y - 0.5f, transform.position.z);
+
+        //이 스크립트 자체를 꺼버림
+        this.enabled = false;
+
+        if (_surpriseUI != null) _surpriseUI.SetActive(false);
+    }
+
+
+
     // [상태1] 순찰 Patrol
     // 1. 웨이포인트 
     private void Patrol()
