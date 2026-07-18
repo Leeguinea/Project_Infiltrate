@@ -42,6 +42,7 @@ public class EnemyController : MonoBehaviour
     [Header("상호작용 UI")]
     [SerializeField] private GameObject _actionPromptCanvas; //Enemy > ActionPromptCanvas 연결용
 
+
     [Header("시체 운반용 컴포넌트")]
     private Rigidbody _enemyRigidbody;
 
@@ -85,6 +86,7 @@ public class EnemyController : MonoBehaviour
             
         }
     }
+
 
     public void TakeAssassination()
     {
@@ -404,9 +406,16 @@ public class EnemyController : MonoBehaviour
     // 플레이어가 암살 범위에 들어오면 UI를 켜고 끄는 함수
     public void ToggleActionPrompt(bool isActive)
     {
-        if (_actionPromptCanvas != null && this.enabled) // 죽은 적은 작동 안 함
+        Debug.Log($"[UI 디버그] 대상: {gameObject.name}, 상태: {isActive}"); // 명령이 가는지 확인
+
+        if (_actionPromptCanvas != null)
         {
             _actionPromptCanvas.SetActive(isActive);
+            Debug.Log($"[UI 디버그] UI 상태 변경 성공: {_actionPromptCanvas.activeSelf}"); // 진짜 켜졌는지 확인
+        }
+        else
+        {
+            Debug.LogError("[UI 디버그] _actionPromptCanvas 변수가 비어있습니다! 인스펙터를 확인하세요!");
         }
     }
 

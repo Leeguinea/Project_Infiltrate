@@ -32,9 +32,11 @@ public class PlayerController : MonoBehaviour
     private EnemyController _lastDetectedEnemy = null; // 직전 프레임에 감지했던 적 기억용 변수
 
     [Header("시체 운반 설정")]
+    [SerializeField] private GameObject _bodyActionPrompt;
     [SerializeField] private float _bodyCheckDistance = 2.0f; //시체를 감지할 수 있는 거리
     [SerializeField] private bool _isCarryingBody = false; //현재 시체를 끌고 있는가?
     private EnemyController _carryingEnemy = null; //내가 끌고 있는 그 시체 
+    //private EnemyController _lastDetectedBody = null;
 
     void Start()
     {
@@ -83,49 +85,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void HandleBodyCarry()
-    {
-        // [상태 1] 이미 시체를 끌고 있는 상태라면?  놓는 키(G) 입력만 기다림
-        if (_isCarryingBody)
-        {
-            if (Input.GetKeyDown(KeyCode.G))
-            {
-                if (_carryingEnemy != null)
-                {
-                    _carryingEnemy.DropBody(); 
-                }
 
-                // 포스트잇 메모장 초기화
-                _carryingEnemy = null;
-                _isCarryingBody = false;
-                Debug.Log("시체를 바닥에 놓았습니다.");
-            }
-            return; // 시체를 끌고 있을 때는 아래의 '새로운 시체 찾기'를 실행하지 않고 탈출
-        }
-
-        // [상태 2] 맨몸 상태라면?  주변에 누워있는(죽은) 적이 있는지 찾음
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, _bodyCheckDistance, _enemyLayer);
-
-        foreach (var hitCollider in hitColliders)
-        {
-            EnemyController enemy = hitCollider.GetComponent<EnemyController>();
-
-            // 스크립트가 꺼져있는 적만 타겟으로 삼음
-            if (enemy != null && !enemy.enabled)
-            {
-                // TODO: 나중에 여기에 "[G] 시체 옮기기" 머리 위 UI
-                if (Input.GetKeyDown(KeyCode.G))
-                {
-                    _carryingEnemy = enemy; // 전용 변수에 저장
-                    _isCarryingBody = true; // 시체 운반 상태 ON
-
-                    _carryingEnemy.CarryBody(transform); //
-                    Debug.Log("시체를 옮기는 중입니다.");
-                    break;
-                }
-            }
-        }
-    }
 
     // C 버튼을 누르면 앉기 + 서기 상태로 변경됨 (물리적 높이를 바꿈)
     private void Crouch()
@@ -213,17 +173,20 @@ public class PlayerController : MonoBehaviour
 
     }
 
-
+    //암살 가능한 타겟 찾기 및 UI 띄우기 
     private void CheckForAssassination()
     {
         Collider[] hitEnemies = Physics.OverlapSphere(transform.position, _assassinateDistance, _enemyLayer);
+
         EnemyController currentTargetEnemy = null;
+
 
         foreach (var enemyCollider in hitEnemies)
         {
             EnemyController enemy = enemyCollider.GetComponent<EnemyController>();
             if (enemy != null && enemy.enabled)
             {
+
                 if (IsBehindEnemy(enemy))
                 {
                     currentTargetEnemy = enemy; // 암살 가능한 대상을 찾음
@@ -270,4 +233,63 @@ public class PlayerController : MonoBehaviour
         //120도 보다 크다면 적의 뒤에 플레이어가 있다고 판단.
         return angle > 120f;
     }
+
+    //죽은 시체 
+    private void HandleBodyCarry()
+    {
+        // [상태 1] 이미 시체를 끌고 있는 상태라면?  -> 놓는 키(G) 입력만 기다림
+        if (_isCarryingBody)
+        {
+            if (Input.GetKeyDown(KeyCode.G))
+            {
+                if (_carryingEnemy != null)
+                {
+                    _carryingEnemy.DropBody();
+                }
+
+                // 포스트잇 메모장 초기화
+                _carryingEnemy = null;
+                _isCarryingBody = false;
+                Debug.Log("시체를 바닥에 놓았습니다.");
+            }
+            return; // 시체를 끌고 있을 때는 아래의 '새로운 시체 찾기'를 실행하지 않고 탈출
+        }
+
+        // [상태 2] 탐색
+        EnemyController currentTarget = null;
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, _bodyCheckDistance, _enemyLayer);
+
+        foreach (var hitCollider in hitColliders)
+        {
+            EnemyController enemy = hitCollider.GetComponent<EnemyController>();
+            if (enemy != null && !enemy.enabled)
+            {
+                currentTarget = enemy;
+                break;
+            }
+        }
+
+
+        // 3. 입력
+        if (currentTarget != null && Input.GetKeyDown(KeyCode.G))
+        {
+            _carryingEnemy = currentTarget;
+            _isCarryingBody = true;
+
+            _carryingEnemy.CarryBody(transform);
+            Debug.Log("시체를 옮기는 중입니다.");
+        }
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
