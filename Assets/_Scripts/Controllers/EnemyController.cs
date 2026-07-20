@@ -26,8 +26,7 @@ public class EnemyController : MonoBehaviour
     private float _patrolWaitTimer = 0f; //대기 시간 타이머
     private bool _isWaitingAtWaypoint = false; //현재 멈춰서 대기중인가?
 
-    private enum EnemyState { Patrol, Chase, Doubt, Surprise }
-    private EnemyState _currentState = EnemyState.Patrol; // 기본값
+    [SerializeField] private EnemyStateManager _stateManager;
 
     [Header("경직 시스템 설정")]
     [SerializeField] private float _surpriseDuration = 3.0f; // 경직 시간
@@ -46,13 +45,21 @@ public class EnemyController : MonoBehaviour
     [Header("시체 운반용 컴포넌트")]
     private Rigidbody _enemyRigidbody;
 
-
+ 
     void Start()
     {
+        _stateManager = GetComponent<EnemyStateManager>();
+        if (_stateManager == null)
+        {
+            Debug.LogError("[{gameObject.name}에 EnemyStateManager 컴포넌트가 없음!]");
+        }
+
         if (player != null)
         {
             _playerController = player.GetComponent<PlayerController>();
+            
         }
+        
     }
 
 
@@ -66,21 +73,21 @@ public class EnemyController : MonoBehaviour
         CheckForPlayerVisibilty();  // 시야 체크 결과 생성(_isPlayerInSight)
         HandleDoubtGauge();         // 결과를 바탕으로 상태 및 게이지 계산 
 
-        switch (_currentState)
+        switch (_stateManager.CurrentState)
         {
-            case EnemyState.Patrol:
+            case EnemyStateManager.EnemyState.Patrol:
                 Patrol();
                 break;
 
-            case EnemyState.Doubt:
+            case EnemyStateManager.EnemyState.Doubt:
                 LookAtPlayer(); //추척하지 않고, 자리에 멈춰 플레이어 주시
                 break;
 
-            case EnemyState.Surprise:
+            case EnemyStateManager.EnemyState.Surprise:
                 HandleSurpriseState();
                 break;
 
-            case EnemyState.Chase:
+            case EnemyStateManager.EnemyState.Chase:
                 Chase();
                 break;
             
@@ -234,7 +241,7 @@ public class EnemyController : MonoBehaviour
         {
             Debug.Log($"[{name}]: 침입자를 추격한다!");
             _surpriseTimer = 0f; // 타이머 초기화
-            _currentState = EnemyState.Chase; 
+            _stateManager.ChangeState(EnemyStateManager.EnemyState.Chase);
 
             if(_surpriseUI != null)
             {
@@ -290,13 +297,15 @@ public class EnemyController : MonoBehaviour
     // 의심 게이지 계산 및 상태 머신 흐름 통제 
     private void HandleDoubtGauge()
     {
+        if (_stateManager == null) return;
+
         // 이미 추적 중 or 경직 상태면 HandleDoubtGauge()함수 패스
-        if (_currentState == EnemyState.Chase || _currentState == EnemyState.Surprise) return;
+        if (_stateManager.CurrentState == EnemyStateManager.EnemyState.Chase || _stateManager.CurrentState == EnemyStateManager.EnemyState.Surprise) return;
 
         // 시야에 있으면?
         if (_isPlayerInSight)
         {
-            _currentState = EnemyState.Doubt;
+            _stateManager.ChangeState(EnemyStateManager.EnemyState.Doubt);
             _currentDoubtValue += _increaseSpeed * Time.deltaTime;
 
             //현재 의심지수가 최대 의심지수와 같거나 크면?
@@ -313,7 +322,7 @@ public class EnemyController : MonoBehaviour
             if (_currentDoubtValue <= 0f)
             {
                 _currentDoubtValue = 0f;
-                _currentState = EnemyState.Patrol;
+                _stateManager.ChangeState(EnemyStateManager.EnemyState.Patrol);
             }
         }
 
@@ -349,7 +358,7 @@ public class EnemyController : MonoBehaviour
     private void TriggerAlert()
     {
         Debug.Log("발각!경비원이 침입자를 완전히 알아챔!");
-        _currentState = EnemyState.Chase;
+        _stateManager.ChangeState(EnemyStateManager.EnemyState.Chase);
         //TODO (Frisk든 뭐든)
     }
 
@@ -378,12 +387,12 @@ public class EnemyController : MonoBehaviour
     public void CCTVCommandChase()
     {
         // 현재 경비원이 이미 추격(Chase) 중이 아니라면?
-        if (_currentState != EnemyState.Chase && _currentState != EnemyState.Surprise)
+        if (_stateManager.CurrentState != EnemyStateManager.EnemyState.Chase && _stateManager.CurrentState != EnemyStateManager.EnemyState.Surprise)
         {
             Debug.Log($"[{name}]: CCTV 무전을 받았다! 엇?! 무슨 일이지? (n초간 정지)");
 
-            _surpriseTimer = 0f; 
-            _currentState = EnemyState.Surprise; 
+            _surpriseTimer = 0f;
+            _stateManager.ChangeState(EnemyStateManager.EnemyState.Surprise);
 
             //느낌표 UI
             if(_surpriseUI != null)
