@@ -2,13 +2,16 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
+    private PlayerController _playerController;
+    public Transform player;
+
+    [Header("컴포넌트 연결")]
+    [SerializeField] public EnemyStateManager _stateManager;
+    [SerializeField] private EnemySensor _enemySensor;
+    [SerializeField] private EnemyPatrol _enemyPatrol;
+
     [Header("정의된 기획 데이터 에셋")]
     public EnemyData enemyData;
-
-    [Header("이동 및 감시 대상")]
-    public Transform[] waypoints; // 웨이포인트 리스트
-    public Transform player; // 감시 대상
-    [SerializeField] private LayerMask _targetAndObstacleMask; // 플레이어 및 장애물 레이어
 
     [Header("의심 시스템 설정")]
     [SerializeField] private float _maxdoubtValue = 100f; // 최대 의심 수치
@@ -19,24 +22,10 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private EnemyDoubtUI _myDoubtUI;
     [SerializeField] private GameObject _surpriseUI;
 
-    [Header("순찰 설정")]
-    [SerializeField] private float _patrolWaitDuration = 5f;
-
-    private int _currentWaypointIndex = 0; // 초기 웨이포인트
-    private float _patrolWaitTimer = 0f; //대기 시간 타이머
-    private bool _isWaitingAtWaypoint = false; //현재 멈춰서 대기중인가?
-
-    [SerializeField] private EnemyStateManager _stateManager;
-
     [Header("경직 시스템 설정")]
     [SerializeField] private float _surpriseDuration = 3.0f; // 경직 시간
     private float _surpriseTimer = 0f; // 경직 누적 타이머
-
     private float _currentDoubtValue = 0f; //의심지수 (0~100)
-    private bool _isPlayerInSight = false;
-    private Transform _playerTransform;
-
-    private PlayerController _playerController;
 
     [Header("상호작용 UI")]
     [SerializeField] private GameObject _actionPromptCanvas; //Enemy > ActionPromptCanvas 연결용
@@ -45,7 +34,18 @@ public class EnemyController : MonoBehaviour
     [Header("시체 운반용 컴포넌트")]
     private Rigidbody _enemyRigidbody;
 
- 
+    void Awake()
+    {
+        if (player == null)
+        {
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null)
+            {
+                player = playerObj.transform;
+            }
+        }
+    }
+
     void Start()
     {
         _stateManager = GetComponent<EnemyStateManager>();
@@ -59,7 +59,6 @@ public class EnemyController : MonoBehaviour
             _playerController = player.GetComponent<PlayerController>();
             
         }
-        
     }
 
 
@@ -70,13 +69,16 @@ public class EnemyController : MonoBehaviour
             return;
         }
 
-        CheckForPlayerVisibilty();  // 시야 체크 결과 생성(_isPlayerInSight)
-        HandleDoubtGauge();         // 결과를 바탕으로 상태 및 게이지 계산 
+        
+        // 결과는 센서의 프로퍼티로 확인
+        bool isSeen = _enemySensor.IsPlayerInSight;
+
+        HandleDoubtGauge(isSeen);     // 결과를 바탕으로 상태 및 게이지 계산 
 
         switch (_stateManager.CurrentState)
         {
             case EnemyStateManager.EnemyState.Patrol:
-                Patrol();
+                _enemyPatrol.Patrol();
                 break;
 
             case EnemyStateManager.EnemyState.Doubt:
@@ -140,69 +142,7 @@ public class EnemyController : MonoBehaviour
     }
 
 
-    // [상태1] 순찰 Patrol
-    // 1. 웨이포인트 
-    private void Patrol()
-    {
-        //만약 웨이포인트에서 대기중인 상태라면?
-        if(_isWaitingAtWaypoint)
-        {
-            _patrolWaitTimer += Time.deltaTime;
-
-            //계획한 시간이 지나면?
-            if(_patrolWaitTimer >= _patrolWaitDuration)
-            {
-                _isWaitingAtWaypoint = false;
-                _patrolWaitTimer = 0f;
-
-                _currentWaypointIndex++;
-                if (_currentWaypointIndex >= waypoints.Length)
-                {
-                    _currentWaypointIndex = 0;
-                }
-            }
-
-            return; //대기 중일 때는 아래의 순찰과정x
-        }
-
-        //순찰
-        if (waypoints.Length == 0) return;
-
-        if (enemyData == null)
-        {
-            Debug.LogError($"[{name}] EnemyData 에셋이 할당되지 않았습니다! 인스펙터를 확인해주세요.");
-            return;
-        }
-
-        // 현재 목적지의 위치 좌표
-        Vector3 targetPositions = waypoints[_currentWaypointIndex].position;
-
-        // 움직일 방향 (목적지 - 현재 위치)
-        Vector3 direction = targetPositions - transform.position;
-
-        targetPositions.y = transform.position.y;
-        direction = targetPositions - transform.position;
-
-        transform.Translate(direction.normalized * enemyData.speed * Time.deltaTime, Space.World);
-
-        //자연스럽게 앞을 보고 순찰하게함.
-        if(direction != Vector3.zero)
-        {
-            transform.forward = direction.normalized;
-        }
-
-        // 웨이포인트와의 거리
-        float distanceToTarget = Vector3.Distance(transform.position, targetPositions);
-
-        // 도착 판정 범위
-        if (distanceToTarget < 0.5f)
-        {
-            _isWaitingAtWaypoint = true;
-            _patrolWaitTimer = 0f;
-
-            Debug.Log($"[{name}]: 웨이포인트에 도착! {{_patrolWaitDuration}}초 동안 멈춰서 정찰합니다.");
-        }
-    }
+    
 
 
     // [상태3] 추적 Chase
@@ -251,51 +191,11 @@ public class EnemyController : MonoBehaviour
     }
 
 
-    // 시야 체크(플레이어 적발 기준) + 레이캐스트(장애물)
-    private void CheckForPlayerVisibilty()
-    {
-        if (player == null || enemyData == null)
-        {
-            _isPlayerInSight = false;
-            return;
-        }
-
-        // enemy와 player 거리
-        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-
-        //플레이어 시야에 들어옴.
-        if (distanceToPlayer < enemyData.viewDistance)
-        {
-            Vector3 directionToPlayer = (player.position - transform.position).normalized;
-            directionToPlayer.y = 0; // 평면상의 각도만 계산하기 위해 y무시
-
-            float angleToPlayer = Vector3.Angle(transform.forward, directionToPlayer);
-
-            if (angleToPlayer < enemyData.viewAngle * 0.5f)
-            {
-                RaycastHit hit;
-                Vector3 rayOrigin = transform.position + Vector3.up * 1f; //레이저 출발점
-                Vector3 rayDirection = (player.position + Vector3.up * 1f - rayOrigin).normalized; //레이저 방향
-
-                if(Physics.Raycast(rayOrigin, rayDirection, out hit, enemyData.viewDistance, _targetAndObstacleMask))
-                {
-                    if (hit.collider.CompareTag("Player"))
-                    {
-                        _isPlayerInSight = true;
-                        return;
-                    }
-                }
-            }
-        }
-
-        //위의 모든 검사(거리, 각도, 레이캐스트)를 통과하지 못했을 때만 플레이어를 놓친 것으로 판단
-        _isPlayerInSight = false;
-
-    }
+    
 
 
     // 의심 게이지 계산 및 상태 머신 흐름 통제 
-    private void HandleDoubtGauge()
+    private void HandleDoubtGauge(bool isPlayerInSight)
     {
         if (_stateManager == null) return;
 
@@ -303,7 +203,7 @@ public class EnemyController : MonoBehaviour
         if (_stateManager.CurrentState == EnemyStateManager.EnemyState.Chase || _stateManager.CurrentState == EnemyStateManager.EnemyState.Surprise) return;
 
         // 시야에 있으면?
-        if (_isPlayerInSight)
+        if (isPlayerInSight)
         {
             _stateManager.ChangeState(EnemyStateManager.EnemyState.Doubt);
             _currentDoubtValue += _increaseSpeed * Time.deltaTime;
@@ -362,25 +262,7 @@ public class EnemyController : MonoBehaviour
         //TODO (Frisk든 뭐든)
     }
 
-    // [Trigger]
-    // 트리거 영역 센서 진입
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            _playerTransform = other.transform;
-        }
-    }
-
-    // 트리거 영역 센서 이탈
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            _playerTransform = null;
-            _isPlayerInSight = false;
-        }
-    }
+    
 
     // CCTV가 경비원(Enemy, 나) 지목해서 호출할 때 실행되는 수신 함수
     // 외부(CCTVObject)에서 호출
@@ -402,15 +284,6 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-
-    private void OnDrawGizmos()
-    {
-        if (_playerTransform != null)
-        {
-            Gizmos.color = _isPlayerInSight ? Color.yellow : Color.blue;
-            Gizmos.DrawLine(transform.position, _playerTransform.position);
-        }
-    }
 
     // 플레이어가 암살 범위에 들어오면 UI를 켜고 끄는 함수
     public void ToggleActionPrompt(bool isActive)
