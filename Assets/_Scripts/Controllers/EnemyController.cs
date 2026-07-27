@@ -9,6 +9,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField] public EnemyStateManager _stateManager;
     [SerializeField] private EnemySensor _enemySensor;
     [SerializeField] private EnemyPatrol _enemyPatrol;
+    [SerializeField] private EnemyChase _enemyChase;
 
     [Header("정의된 기획 데이터 에셋")]
     public EnemyData enemyData;
@@ -90,9 +91,29 @@ public class EnemyController : MonoBehaviour
                 break;
 
             case EnemyStateManager.EnemyState.Chase:
-                Chase();
+                _enemyChase.Chase();
                 break;
             
+        }
+    }
+
+    // CCTV가 경비원(Enemy, 나) 지목해서 호출할 때 실행되는 수신 함수
+    // 외부(CCTVObject)에서 호출
+    public void CCTVCommandChase()
+    {
+        // 현재 경비원이 이미 추격(Chase) 중이 아니라면?
+        if (_stateManager.CurrentState != EnemyStateManager.EnemyState.Chase && _stateManager.CurrentState != EnemyStateManager.EnemyState.Surprise)
+        {
+            Debug.Log($"[{name}]: CCTV 무전을 받았다! 엇?! 무슨 일이지? (n초간 정지)");
+
+            _surpriseTimer = 0f;
+            _stateManager.ChangeState(EnemyStateManager.EnemyState.Surprise);
+
+            //느낌표 UI
+            if (_surpriseUI != null)
+            {
+                _surpriseUI.SetActive(true);
+            }
         }
     }
 
@@ -145,31 +166,7 @@ public class EnemyController : MonoBehaviour
     
 
 
-    // [상태3] 추적 Chase
-    private void Chase()
-    {
-        if (player == null || enemyData == null) return;
-
-        Vector3 direction = player.position - transform.position;
-        direction.y = 0;
-
-        Vector3 normorlizedDirection = direction.normalized;
-
-        if (normorlizedDirection != Vector3.zero)
-        {
-            transform.forward = normorlizedDirection;
-        }
-
-        transform.Translate(normorlizedDirection * enemyData.speed * Time.deltaTime, Space.World);
-
-        // 잡혔을 때 게임오버
-        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-
-        if (distanceToPlayer < 1.2f)
-        {
-            GameManager.Instance.TriggerGameOver();
-        }
-    }
+    
 
     // cctv 호출을 받고 경직되는 시간을 재는 함수
     private void HandleSurpriseState()
@@ -264,25 +261,7 @@ public class EnemyController : MonoBehaviour
 
     
 
-    // CCTV가 경비원(Enemy, 나) 지목해서 호출할 때 실행되는 수신 함수
-    // 외부(CCTVObject)에서 호출
-    public void CCTVCommandChase()
-    {
-        // 현재 경비원이 이미 추격(Chase) 중이 아니라면?
-        if (_stateManager.CurrentState != EnemyStateManager.EnemyState.Chase && _stateManager.CurrentState != EnemyStateManager.EnemyState.Surprise)
-        {
-            Debug.Log($"[{name}]: CCTV 무전을 받았다! 엇?! 무슨 일이지? (n초간 정지)");
-
-            _surpriseTimer = 0f;
-            _stateManager.ChangeState(EnemyStateManager.EnemyState.Surprise);
-
-            //느낌표 UI
-            if(_surpriseUI != null)
-            {
-                _surpriseUI.SetActive(true);
-            }
-        }
-    }
+    
 
 
     // 플레이어가 암살 범위에 들어오면 UI를 켜고 끄는 함수

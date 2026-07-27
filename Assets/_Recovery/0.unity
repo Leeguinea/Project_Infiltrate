@@ -2486,6 +2486,7 @@ MonoBehaviour:
   _stateManager: {fileID: 1265536293}
   _enemySensor: {fileID: 1265536294}
   _enemyPatrol: {fileID: 1265536295}
+  _enemyChase: {fileID: 0}
   enemyData: {fileID: 11400000, guid: 40395bc401a3f524a92a97603fa0488c, type: 2}
   _maxdoubtValue: 100
   _increaseSpeed: 50
