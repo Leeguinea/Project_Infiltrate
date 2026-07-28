@@ -2367,6 +2367,7 @@ GameObject:
   - component: {fileID: 1265536293}
   - component: {fileID: 1265536294}
   - component: {fileID: 1265536295}
+  - component: {fileID: 1265536296}
   m_Layer: 10
   m_Name: Enemy
   m_TagString: Enemy
@@ -2486,6 +2487,7 @@ MonoBehaviour:
   _stateManager: {fileID: 1265536293}
   _enemySensor: {fileID: 1265536294}
   _enemyPatrol: {fileID: 1265536295}
+  _enemyChase: {fileID: 0}
   enemyData: {fileID: 11400000, guid: 40395bc401a3f524a92a97603fa0488c, type: 2}
   _maxdoubtValue: 100
   _increaseSpeed: 50
@@ -2564,6 +2566,18 @@ MonoBehaviour:
   - {fileID: 1456990437}
   - {fileID: 733454662}
   _patrolWaitDuration: 5
+--- !u!114 &1265536296
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1265536286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2ba633fe657cbd459332c59cac482c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyChase
 --- !u!1 &1283718751
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,6 +10,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private EnemySensor _enemySensor;
     [SerializeField] private EnemyPatrol _enemyPatrol;
     [SerializeField] private EnemyChase _enemyChase;
+    [SerializeField] private EnemyStealthAction _enemySA;
 
     [Header("정의된 기획 데이터 에셋")]
     public EnemyData enemyData;
@@ -22,6 +23,10 @@ public class EnemyController : MonoBehaviour
     [Header("자식 UI 연결")]
     [SerializeField] private EnemyDoubtUI _myDoubtUI;
     [SerializeField] private GameObject _surpriseUI;
+
+    public GameObject SurpriseUI => _surpriseUI;
+    public float SurpriseTimer { get => _surpriseTimer; set => _surpriseTimer = value; }
+
 
     [Header("경직 시스템 설정")]
     [SerializeField] private float _surpriseDuration = 3.0f; // 경직 시간
@@ -118,56 +123,6 @@ public class EnemyController : MonoBehaviour
     }
 
 
-    public void TakeAssassination()
-    {
-        Debug.Log($"[{name}]: 적이 뒤에서 기습당해 제압되었다!");
-
-        //TODO: 애니메이션으로 교체하고 아래 코드 삭제
-        transform.rotation = Quaternion.Euler(90f, transform.eulerAngles.y, transform.eulerAngles.z);
-        transform.position = new Vector3(transform.position.x, transform.position.y - 0.5f, transform.position.z);
-
-        //이 스크립트 자체를 꺼버림
-        this.enabled = false;
-
-        if (_surpriseUI != null) _surpriseUI.SetActive(false);
-    }
-
-    //플레이어가 시체를 붙잡을 떄
-    public void CarryBody(Transform playerTransform)
-    {
-        //플레이어의 자식으로 들어가게 함.
-        transform.SetParent(playerTransform);
-        transform.localPosition = new Vector3(0f, -0.5f, -0.8f);
-
-        //정면이 하늘을 보게 함
-        transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
-
-        //리지드바디 잠깐 꺼주기 (끌려다니는 동안 물리 충돌로 버벅거리지 않게 하려고)
-        if(GetComponent<Rigidbody>() != null)
-        {
-            GetComponent<Rigidbody>().isKinematic = true;
-        }
-    }
-
-    //플레이어가 시체를 놓을 때
-    public void DropBody()
-    {
-        transform.SetParent(null);
-
-        if (GetComponent<Rigidbody>() != null)
-        {
-            GetComponent<Rigidbody>().isKinematic = false;
-        }
-
-        transform.position = new Vector3(transform.position.x, 0.1f, transform.position.z);
-    }
-
-
-    
-
-
-    
-
     // cctv 호출을 받고 경직되는 시간을 재는 함수
     private void HandleSurpriseState()
     {
@@ -186,9 +141,6 @@ public class EnemyController : MonoBehaviour
             }
         }
     }
-
-
-    
 
 
     // 의심 게이지 계산 및 상태 머신 흐름 통제 
@@ -261,9 +213,6 @@ public class EnemyController : MonoBehaviour
 
     
 
-    
-
-
     // 플레이어가 암살 범위에 들어오면 UI를 켜고 끄는 함수
     public void ToggleActionPrompt(bool isActive)
     {
@@ -280,4 +229,28 @@ public class EnemyController : MonoBehaviour
         }
     }
 
+    //// EnemyController.cs 안에 추가해 둘 수 있는 중계(3)
+    public void TakeAssassination()
+    {
+        if (_enemySA != null)
+        {
+            _enemySA.TakeAssassination();
+        }
+    }
+
+    public void CarryBody(Transform playerTransform)
+    {
+        if (_enemySA != null)
+        {
+            _enemySA.CarryBody(playerTransform);
+        }
+    }
+
+    public void DropBody()
+    {
+        if (_enemySA != null)
+        {
+            _enemySA.DropBody();
+        }
+    }
 }
