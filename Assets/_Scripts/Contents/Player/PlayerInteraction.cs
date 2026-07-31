@@ -12,7 +12,7 @@ public class PlayerInteraction : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E)) Debug.Log("키보드 E 입력은 정상 작동 중!");
+        //if (Input.GetKeyDown(KeyCode.E)) Debug.Log("키보드 E 입력은 정상 작동 중!");
 
         CheckForInteractable();
 
