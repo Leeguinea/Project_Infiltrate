@@ -4,13 +4,17 @@ public class PlayerEquip : MonoBehaviour
 {
     private PlayerController _controller;
 
+    [Header("컴포넌트 연결")]
+    [SerializeField] private Inventory _inventory;
+
     public ItemType CurrentItemType { get; private set; } = ItemType.None;
     public bool Using = false;
 
     [Header("References")]
     public GameObject _interactableItem; //상호작용 가능 아이템
-    public Transform _handTransform; //무기 위치가 될 곳 (새로운 아이템)
     public GameObject _handItem; //손에 쥐고 있는 아이템
+    public Transform _handTransform; //무기 위치가 될 곳 (새로운 아이템)
+    
 
     private void Update()
     {
@@ -34,7 +38,10 @@ public class PlayerEquip : MonoBehaviour
                 //손에 아이템을 쥐고 있으면 버리고, 새거 줍기
                 else
                 {
-                    DropCurrentItem();
+                    // 1. CurrentItemType을 Inventory에 보내주기.
+                    _inventory.AddItem(CurrentItemType);
+                    //2._handItem(false); //눈에 보이지 않게
+
                     EquipNewItem(_interactableItem);
                 }
 
