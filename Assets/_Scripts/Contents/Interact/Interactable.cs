@@ -1,5 +1,7 @@
 using UnityEngine;
 
+//상호작용하는 물건/아이템 등에 컴포넌트로 들어가거나, 상속함.
+
 public class Interactable : MonoBehaviour
 {
     [Header("상호작용 기본 설정")]
