@@ -1,5 +1,6 @@
 using UnityEngine;
 
+//TODO: »Æ¿Â
 public enum ItemType
 {
     None,

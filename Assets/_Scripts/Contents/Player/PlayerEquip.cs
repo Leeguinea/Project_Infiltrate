@@ -40,9 +40,10 @@ public class PlayerEquip : MonoBehaviour
                 //손에 아이템을 쥐고 있으면 버리고, 새거 줍기
                 else
                 {
-                    // 1. CurrentItemType을 Inventory에 보내주기.
-                    _inventory.AddItem(CurrentItemType);
-                    //2._handItem(false); //눈에 보이지 않게
+                    // CurrentItemType을 Inventory에 보내주기.
+                    // 일단 임시로 count를 1로 함.
+                    _inventory.AddItem(CurrentItemType, 1);
+                    // _handItem(false); //눈에 보이지 않게
 
                     EquipNewItem(_interactableItem);
                 }
