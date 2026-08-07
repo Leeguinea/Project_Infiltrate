@@ -42,6 +42,7 @@ public class Inventory : MonoBehaviour
                 return;
             }
         }
+
         // 같은 아이템이 없다면, 빈 슬롯(IsEmpty)을 찾아 새로 아이템 채우기
         for (int i = 0; i < slots.Count; i++)
         {

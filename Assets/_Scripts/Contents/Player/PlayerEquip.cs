@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using System.Collections.Generic;
 //플레이어가 아이템을 줍고, 버림.
 //플레이어에 붙어있는 스크립트 
 public class PlayerEquip : MonoBehaviour
@@ -136,10 +136,44 @@ public class PlayerEquip : MonoBehaviour
 
     }
 
-    public void SetInteractableItem(ItemObject item)
+    //감지된 오브젝트 리스트를 ItemSensor로 받고
+    //가장 가장 가까운오브젝트를 추출
+    public void SetInteractableItem(List<ItemObject> nearItems)
     {
-        _interactableItem = item;
-        Debug.Log($"아이템 감지됨: {item.name}");
+        if (nearItems != null && nearItems.Count == 0)
+        {
+            _interactableItem = null;
+            return;
+        }
+
+        Vector3 playerPos = transform.position;
+        Vector3 playerDir = transform.forward;
+
+        ItemObject closestItem = null;
+        float highestScore = 0;
+
+        foreach (ItemObject item in nearItems)
+        {
+            Vector3 toItemDir = item.transform.position - playerPos;
+            float distance = toItemDir.magnitude;
+            float dot = Vector3.Dot(playerDir, toItemDir.normalized);
+
+            // 정면일 수록 높고, 가까울수록 가산점
+            float score = dot - (distance * 0.1f);
+
+            if (score > highestScore)
+            {
+                highestScore = score; //갱신
+                closestItem = item;
+            }
+        }
+
+        _interactableItem = closestItem;
+
+        if (_interactableItem != null)
+        {
+            Debug.Log($"현재 상호작용 대상: {_interactableItem}");
+        }
     }
 
     public void ClearInteractableItem(ItemObject item)
