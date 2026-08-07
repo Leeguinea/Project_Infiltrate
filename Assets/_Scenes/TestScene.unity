@@ -1891,7 +1891,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerEquip
   _inventory: {fileID: 838198331}
   Using: 0
-  _interactableItem: {fileID: 1218438020}
+  _interactableItem: {fileID: 1218438028}
   _handItem: {fileID: 0}
   _handTransform: {fileID: 1039451120}
 --- !u!114 &838198331
@@ -1906,7 +1906,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ea3f1a8ee2254e46ab1e972db0b63ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Inventory
-  items: 
+  slotCapacity: 20
+  slots: []
 --- !u!1 &863481556
 GameObject:
   m_ObjectHideFlags: 0

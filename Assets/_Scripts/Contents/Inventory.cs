@@ -59,4 +59,29 @@ public class Inventory : MonoBehaviour
 
         Debug.Log("인벤토리가 꽉 찼습니다!");
     }
+
+
+    public void DropCurrentItem(ItemType currentItemType, int count)
+    {
+        //인벤토리에 들어 있는 아이템(기존에 있다면 -1)
+        for (int i = 0; i < slots.Count; i++)
+        {
+            if (slots[i].itemType == currentItemType)
+            {
+                Slot targetSlot = slots[i];
+                targetSlot.count -= count;
+
+                if (targetSlot.count <= 0)
+                {
+                    targetSlot.itemType = ItemType.None;
+                    targetSlot.count = 0;
+                }
+                slots[i] = targetSlot; //덮어씌우기
+                return;
+            }
+        }
+
+
+    }
+
 }

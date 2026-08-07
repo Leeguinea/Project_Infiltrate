@@ -40,11 +40,6 @@ public class PlayerEquip : MonoBehaviour
                 //손에 아이템을 쥐고 있으면 버리고, 새거 줍기
                 else
                 {
-                    // CurrentItemType을 Inventory에 보내주기.
-                    // 일단 임시로 count를 1로 함.
-                    _inventory.AddItem(CurrentItemType, 1);
-                    // _handItem(false); //눈에 보이지 않게
-
                     EquipNewItem(_interactableItem);
                 }
 
@@ -52,43 +47,25 @@ public class PlayerEquip : MonoBehaviour
         }
     }
 
-    //Z버튼으로 아이템 드롭하기
-    public void DropItemInput()
-    {
-        if (CurrentItemType != ItemType.None && Input.GetKeyDown(KeyCode.Z))
-        {
-            DropCurrentItem();
-        }
-    }
-
-
     //새로운 아이템을 장착하는 함수 
     private void EquipNewItem(ItemObject targetItem)
     {
         //이미 손에 쥐고 있는 아이템이 있다면 새 아이템 쥐기 전에 처리
         if (_handItem != null && _handItem != targetItem.gameObject)
         {
-            // TODO 기존에 들고 있던 아이템의 부모를 해제하고 인벤토리로 보내기
-            // 일단 임시 코드로 대체 
-            // [임시] 만약 기존 아이템을 그냥 월드에 떨어뜨리기 
-            _handItem.transform.SetParent(null);
-            Rigidbody oldRb = _handItem.GetComponent<Rigidbody>();
-
-            if (oldRb != null)
+            // 기존에 들고 있던 아이템의 타입을 알아내서 인벤토리 넣기.
+            ItemData oldItemData = _handItem.GetComponent<ItemData>();
+            if (oldItemData != null)
             {
-                oldRb.isKinematic = false;
-                oldRb.detectCollisions = true;
+                _inventory.AddItem(oldItemData.itemType, 1);
             }
 
-            //기존에 들고 있던 아이템의 콜라이더 트리거 끄기 (바닥 뚫림 방지)
-            Collider oldCol = _handItem.GetComponent<Collider>();
-            if (oldCol != null)
-            {
-                oldCol.isTrigger = false;
-            }
+
+            Destroy(_handItem);
         }
 
-        _handItem = targetItem.gameObject;
+        //새로 주운 아이템을 손에 쥐여줌
+        _handItem = targetItem.gameObject; 
 
         //부모자식 설정 및 위치 초기화
         _handItem.transform.SetParent(_handTransform);
@@ -117,6 +94,20 @@ public class PlayerEquip : MonoBehaviour
             CurrentItemType = itemData.itemType; // 아이템이 Knife면 Knife로, Coin이면 Coin으로 자동 세팅
         }
     }
+
+
+    //Z버튼으로 아이템 드롭하기
+    public void DropItemInput()
+    {
+        if (CurrentItemType != ItemType.None && Input.GetKeyDown(KeyCode.Z))
+        {
+            DropCurrentItem(); //물리적 드롭
+
+            CurrentItemType = ItemType.None;
+            _handItem = null;
+        }
+    }
+
 
     //들고 있는 아이템을 드롭하는 함수
     private void DropCurrentItem()
