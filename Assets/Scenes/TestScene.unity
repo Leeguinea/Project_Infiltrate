@@ -3805,6 +3805,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ea3f1a8ee2254e46ab1e972db0b63ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Inventory
+  slotParent: {fileID: 1237279259}
   slotCapacity: 20
   slots: []
 --- !u!1 &863481556
@@ -5360,7 +5361,7 @@ GameObject:
   - component: {fileID: 1472062709}
   - component: {fileID: 1472062708}
   m_Layer: 8
-  m_Name: InteractableItem_Test (1)
+  m_Name: Fish
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5406,7 +5407,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c70f4584ef5f372449addb70d2ff1b5f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  itemType: 1
+  itemType: 3
 --- !u!54 &1472062711
 Rigidbody:
   m_ObjectHideFlags: 0

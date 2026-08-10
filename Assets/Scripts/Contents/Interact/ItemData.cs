@@ -5,7 +5,8 @@ public enum ItemType
 {
     None,
     Knife,
-    Coin
+    Coin,
+    Fish
 }
 
 public class ItemData : MonoBehaviour

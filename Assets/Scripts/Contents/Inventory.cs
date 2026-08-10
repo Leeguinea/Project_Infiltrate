@@ -45,26 +45,30 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    private void Update()
+    private void OnValidate()
     {
-        // 키보드 'T'를 누르면 0번 슬롯에 포션 3개를 강제로 넣고 화면을 새로고침!
-        if (Input.GetKeyDown(KeyCode.T))
+        // 게임이 실행 중일 때만 업데이트 수행
+        if (Application.isPlaying)
         {
-            // 1. 리스트에서 0번 슬롯 데이터를 임시 변수(tempSlot)에 통째로 복사해옵니다.
-            Slot tempSlot = slots[0];
-
-            // 2. 임시 변수의 값을 변경합니다.
-            tempSlot.itemType = ItemType.Knife;
-            tempSlot.count = 3;
-
-            // 3. 변경된 임시 변수를 다시 리스트의 0번 자리에 덮어씌웁니다! (핵심)
-            slots[0] = tempSlot;
-
-            UpdateUI(); // 화면 갱신 함수 호출!
-            Debug.Log("테스트 아이템 추가 완료!");
+            UpdateUI();
         }
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            Slot tempSlot = slots[0];
+            tempSlot.itemType = ItemType.Fish;
+            tempSlot.count = 1;
+            slots[0] = tempSlot;
+
+            UpdateUI();
+
+            // --- 이 줄을 추가해서 개수가 몇 개나 들어있는지 확인해보세요! ---
+            Debug.Log($"현재 등록된 UI 슬롯 개수: {slotUIs.Count}");
+        }
+    }
     //데이터 ADD
     public void AddItem(ItemType newItemType, int count)
     {

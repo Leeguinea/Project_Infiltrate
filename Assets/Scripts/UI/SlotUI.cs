@@ -22,8 +22,9 @@ public class SlotUI : MonoBehaviour
             // 아이템이 있을 때
             iconImage.gameObject.SetActive(true);
 
-            // TODO: 나중에 ItemType에 맞는 아이콘 이미지를 로드
-            // iconImage.sprite = Resources.Load<Sprite>($"Icons/{itemType}");
+            //Resource/Icons/폴더에서 스프라이트를 찾아옴
+            Sprite icon = Resources.Load<Sprite>($"Icons/{itemType}");
+            iconImage.sprite = icon;
 
             if (count > 1)
             {
