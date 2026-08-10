@@ -54,21 +54,7 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            Slot tempSlot = slots[0];
-            tempSlot.itemType = ItemType.Fish;
-            tempSlot.count = 1;
-            slots[0] = tempSlot;
 
-            UpdateUI();
-
-            // --- 이 줄을 추가해서 개수가 몇 개나 들어있는지 확인해보세요! ---
-            Debug.Log($"현재 등록된 UI 슬롯 개수: {slotUIs.Count}");
-        }
-    }
     //데이터 ADD
     public void AddItem(ItemType newItemType, int count)
     {
@@ -81,6 +67,7 @@ public class Inventory : MonoBehaviour
                 targetSlot.count += count;
                 slots[i] = targetSlot;
 
+                UpdateUI();
                 return;
             }
         }
@@ -96,6 +83,7 @@ public class Inventory : MonoBehaviour
                     count = count
                 };
 
+                UpdateUI();
                 return;
             }
         }
@@ -120,6 +108,8 @@ public class Inventory : MonoBehaviour
                     targetSlot.count = 0;
                 }
                 slots[i] = targetSlot; //덮어씌우기
+
+                UpdateUI();
                 return;
             }
         }
