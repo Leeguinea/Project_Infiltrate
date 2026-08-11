@@ -17,9 +17,10 @@ public class Inventory : MonoBehaviour
     private PlayerEquip _playerEquip;
 
     //UI
-    [SerializeField] 
-    private Transform slotParent; // InventoryPanel 오브젝트
-    private List<SlotUI> slotUIs = new List<SlotUI>();
+    [SerializeField] private Transform slotParent; // InventoryPanel 오브젝트
+    [SerializeField] private GameObject inventoryPanel; //인벤토리 전체창
+
+    private List<SlotUI> slotUIs = new List<SlotUI>(); //슬롯
 
     //데이터
     [SerializeField] 
@@ -45,6 +46,14 @@ public class Inventory : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.I))
+        {
+            ToggleInventory();
+        }
+    }
+
     private void OnValidate()
     {
         // 게임이 실행 중일 때만 업데이트 수행
@@ -52,6 +61,12 @@ public class Inventory : MonoBehaviour
         {
             UpdateUI();
         }
+    }
+
+    public void ToggleInventory()
+    {
+        bool isActive = !inventoryPanel.activeSelf;
+        inventoryPanel.SetActive(isActive);
     }
 
 
