@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -8,31 +9,46 @@ public struct Slot
     public int count;       
 
     // 빈 슬롯 확인용
-    public bool IsEmpty => itemType == ItemType.None; // (만약 ItemType에 None이 없다면 적절히 수정)
+    public bool IsEmpty => itemType == ItemType.None;
 }
 
 
 public class Inventory : MonoBehaviour
 {
+    public static bool isInventoryOpen = false; //인벤토리가 열릴 땜나 A,D 우선권 부여 
     private PlayerEquip _playerEquip;
 
     //UI
     [SerializeField] private Transform slotParent; // InventoryPanel 오브젝트
     [SerializeField] private GameObject inventoryPanel; //인벤토리 전체창
+    [SerializeField] private GameObject selectionHighlight; // 인스펙터에서 테두리 이미지 오브젝트 연결
+    [SerializeField] private Transform[] slotTransforms;    // 5개 슬롯의 위치를 담을 배열
 
-    private List<SlotUI> slotUIs = new List<SlotUI>(); //슬롯
+    [Header("Inventory Settings")]
+    [SerializeField] private int slotCapacity = 20;         // 전체 인벤토리 칸 수 (데이터 총량)
+    private int maxVisibleSlots = 5;    //화면에 보이는 슬롯 개수
 
-    //데이터
-    [SerializeField] 
-    private int slotCapacity = 20; // 인벤토리 칸 수
-    public List<Slot> slots = new List<Slot>();
+    // 데이터 및 상태 관리
+    public List<Slot> slots = new List<Slot>();           // 전체 아이템 데이터 주머니 (20칸)
+    private List<SlotUI> slotUIs = new List<SlotUI>();      // UI 슬롯 컴포넌트 리스트
+
+    private int selectedIndex = 0;                          // 화면에 보이는 5개 슬롯 중 선택된 위치 (0 ~ 4)
+    private int dataStartIndex = 0;
+
 
 
     private void Awake()
     {
         // 1. 패널 밑에 있는 모든 SlotUI 컴포넌트들을 가져와서 배열로 받은 뒤 리스트로 변환하거나 담기
         SlotUI[] foundSlots = slotParent.GetComponentsInChildren<SlotUI>();
-        
+
+        //slotTransforms 배열 자동 채우기 
+        slotTransforms = new Transform[foundSlots.Length];
+        for (int i = 0; i < foundSlots.Length; i++)
+        {
+            slotTransforms[i] = foundSlots[i].transform;
+        }
+
         // 게임 시작할 때 빈 슬록들로 미리 칸 채우기
         for (int i = 0; i < slotCapacity; i++)
         {
@@ -48,9 +64,102 @@ public class Inventory : MonoBehaviour
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.I))
+        // I 키로 인벤토리 열고 닫기
+        if (Input.GetKeyDown(KeyCode.I))
         {
-            ToggleInventory();
+            isInventoryOpen = !isInventoryOpen;
+            inventoryPanel.SetActive(isInventoryOpen); // 패널 켜고 끄기
+
+            if (isInventoryOpen)
+            {
+                selectedIndex = 0;
+                UpdateUI();
+                UpdateSelectionUI();
+            }
+        }
+
+        // 인벤토리가 안 켜져 있으면 아래 코드를 실행하지 않음!
+        if (!isInventoryOpen) return;
+
+        // D 키를 누르면 오른쪽 이동 함수 호출
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            MoveRight();
+        }
+
+        // A 키를 누르면 왼쪽 이동 함수 호출
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            MoveLeft();
+        }
+    }
+
+
+    // UI 띄우기 (데이터 슬라이딩)
+    public void UpdateUI()
+    {
+        if(slotUIs == null || slotUIs.Count == 0) return;
+
+        for (int i = 0; i < maxVisibleSlots; i++) // 화면에 보이는 5개 슬롯만큼만 반복
+        {
+            int targetIndex = dataStartIndex + i; // 시작 위치 + 현재 슬롯 번호
+
+            // 화면에 보이는 UI(slotUIs[i])에 전체 데이터(slots[targetIndex])를 맵핑
+            if (targetIndex < slots.Count && slots[targetIndex].itemType != ItemType.None)
+            {
+                slotUIs[i].SetSlot(slots[targetIndex].itemType, slots[targetIndex].count);
+            }
+            else
+            {
+                slotUIs[i].ClearSlot(); // 아이템이 없으면 빈 칸으로 비우기
+            }
+        }
+    }
+
+    void MoveRight()
+    {
+        selectedIndex++;
+
+        //테두리가 맨 오른쪽을 넘어가려할 때
+        if(selectedIndex >= maxVisibleSlots)
+        {
+            selectedIndex = maxVisibleSlots - 1; //테두리는 마지막에 고정
+            dataStartIndex++; //칸을 오른쪽으로 민다.
+
+            //데이터 범위를 넘지 않게 예외처리
+            if (dataStartIndex > slotCapacity - maxVisibleSlots)
+            {
+                dataStartIndex = slotCapacity - maxVisibleSlots;
+            }
+        }
+        UpdateUI();
+        UpdateSelectionUI();
+    }
+
+    void MoveLeft()
+    {
+        selectedIndex--;
+
+        if(selectedIndex < 0)
+        {
+            selectedIndex = 0;
+            dataStartIndex--;
+
+            if(dataStartIndex < 0)
+            {
+                dataStartIndex = 0;
+            }
+        }
+        UpdateUI();
+        UpdateSelectionUI();
+    }
+
+    // 선택된 위치로 하이라이트 테두리 이동
+    void UpdateSelectionUI()
+    {
+        if (selectionHighlight != null && slotTransforms.Length > selectedIndex)
+        {
+            selectionHighlight.transform.position = slotTransforms[selectedIndex].position;
         }
     }
 
@@ -130,21 +239,5 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    //UI 띄우기
-    public void UpdateUI()
-    {
-        for (int i = 0; i < slotUIs.Count; i++)
-        {
-            // 내 인벤토리 데이터(slots)에 있는 정보와, 화면에 있는 UI(_slots)를 1:1로 연결!
-            if (i < slots.Count && slots[i].itemType != ItemType.None)
-            {
-                slotUIs[i].SetSlot(slots[i].itemType, slots[i].count);
-            }
-            else
-            {
-                slotUIs[i].ClearSlot(); // 데이터 개수보다 UI가 더 많다면 빈 칸으로 만들기
-            }
-        }
-    }
 
 }

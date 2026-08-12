@@ -62,6 +62,9 @@ public class PlayerController : MonoBehaviour
         }
 
 
+        // 인벤토리가 켜져 있으면 플레이어 이동 로직을 아예 패스함!
+        if (Inventory.isInventoryOpen) return;
+
         //키보드 입력 받기
         float moveX = Input.GetAxisRaw("Horizontal");
         float moveZ = Input.GetAxisRaw("Vertical");
