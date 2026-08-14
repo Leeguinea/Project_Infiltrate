@@ -4,7 +4,6 @@ using UnityEngine;
 public class ItemObject : Interactable
 {
     private ItemData _itemData;
-    private ItemObject _interactableItem; //현재 주울 수 있는 아이템
 
     void Awake()
     {

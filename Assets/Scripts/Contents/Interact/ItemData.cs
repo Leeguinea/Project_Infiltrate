@@ -4,9 +4,12 @@ using UnityEngine;
 public enum ItemType
 {
     None,
-    Knife,
-    Coin,
-    Fish
+    Hammer,
+    Drill,
+    Pipe,
+    Wrench,
+    Screw,
+    Saw
 }
 
 public class ItemData : MonoBehaviour

@@ -8,14 +8,15 @@ public class PlayerEquip : MonoBehaviour
 
     [Header("컴포넌트 연결")]
     [SerializeField] private Inventory _inventory;
+    [SerializeField] private ItemDatabase _itemDatabase; // 데이터베이스 연결 추가
+    [SerializeField] private Transform _handTransform;   // 손 위치
 
     public ItemType CurrentItemType { get; private set; } = ItemType.None;
     public bool Using = false;
 
     [Header("References")]
-    public ItemObject _interactableItem; //상호작용 가능 아이템 (ItemObject 타입)
-    public GameObject _handItem; //손에 쥐고 있는 아이템 (실제 게임 오브젝트)
-    public Transform _handTransform; //무기 위치가 될 곳 (새로운 아이템)
+    public ItemObject _interactableItem;
+    public GameObject _handItem;         // 실제 손에 들린 오브젝트
 
 
     private void Update()
@@ -24,116 +25,117 @@ public class PlayerEquip : MonoBehaviour
         DropItemInput();
     }
 
-    //E버튼으로 아이템 줍기
-    public void GetItemInput()
+    // 인벤토리에서 장착할 때 호출되는 함수
+    public void EquipWeapon(ItemType itemType)
     {
-        if (_interactableItem != null)
+        // 기존 아이템 처리
+        if (_handItem != null)
         {
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                //아이템이 없으면 그냥 줍기
-                if (CurrentItemType == ItemType.None)
-                {
-                    EquipNewItem(_interactableItem);
-                }
-
-                //손에 아이템을 쥐고 있으면 버리고, 새거 줍기
-                else
-                {
-                    EquipNewItem(_interactableItem);
-                }
-
-            }
-        }
-    }
-
-    //새로운 아이템을 장착하는 함수 
-    private void EquipNewItem(ItemObject targetItem)
-    {
-        //이미 손에 쥐고 있는 아이템이 있다면 새 아이템 쥐기 전에 처리
-        if (_handItem != null && _handItem != targetItem.gameObject)
-        {
-            // 기존에 들고 있던 아이템의 타입을 알아내서 인벤토리 넣기.
-            ItemData oldItemData = _handItem.GetComponent<ItemData>();
-            if (oldItemData != null)
-            {
-                _inventory.AddItem(oldItemData.itemType, 1);
-            }
-
-
             Destroy(_handItem);
         }
 
-        //새로 주운 아이템을 손에 쥐여줌
-        _handItem = targetItem.gameObject; 
+        // 데이터베이스에서 프리팹 찾기
+        GameObject prefabToSpawn = _itemDatabase.GetHandPrefab(itemType);
 
-        //부모자식 설정 및 위치 초기화
-        _handItem.transform.SetParent(_handTransform);
-        _handItem.transform.localPosition = Vector3.zero;
-        _handItem.transform.localRotation = Quaternion.identity;
-
-        Rigidbody rb = _handItem.GetComponent<Rigidbody>();
-
-        if (rb != null)
+        if (prefabToSpawn != null)
         {
-            rb.isKinematic = true;
-            rb.detectCollisions = false;
+            // 프리팹 생성 및 장착
+            _handItem = Instantiate(prefabToSpawn, _handTransform);
+            _handItem.transform.localPosition = Vector3.zero;
+            _handItem.transform.localRotation = Quaternion.identity;
+
+            SetupHandItemPhysics(_handItem);
+            CurrentItemType = itemType;
         }
-
-        // [손에 쥐고 있는 동안 플레이어가 밟고 뜨는 현상(발판 버그) 방지용 트리거 켜기
-        Collider newCol = _handItem.GetComponent<Collider>();
-        if (newCol != null)
+        else
         {
-            newCol.isTrigger = true;
-        }
-
-        //ItemData 스크립트 참조 
-        ItemData itemData = _handItem.GetComponent<ItemData>();
-        if (itemData != null)
-        {
-            CurrentItemType = itemData.itemType; // 아이템이 Knife면 Knife로, Coin이면 Coin으로 자동 세팅
-        }
-    }
-
-
-    //Z버튼으로 아이템 드롭하기
-    public void DropItemInput()
-    {
-        if (CurrentItemType != ItemType.None && Input.GetKeyDown(KeyCode.Z))
-        {
-            DropCurrentItem(); //물리적 드롭
-
+            Debug.LogWarning("프리팹을 찾을 수 없습니다.");
             CurrentItemType = ItemType.None;
             _handItem = null;
         }
     }
 
+    // E 버튼으로 아이템 줍기 (월드 상호작용)
+    public void GetItemInput()
+    {
+        if (_interactableItem != null && Input.GetKeyDown(KeyCode.E))
+        {
+            EquipNewItem(_interactableItem);
+        }
+    }
 
-    //들고 있는 아이템을 드롭하는 함수
+    // 새로운 아이템을 장착하는 함수 (상호작용)
+    private void EquipNewItem(ItemObject targetItem)
+    {
+        // 기존에 들고 있던 게 있다면 인벤토리로 보내기
+        if (_handItem != null)
+        {
+            ItemData oldData = _handItem.GetComponent<ItemData>();
+            if (oldData != null) _inventory.AddItem(oldData.itemType, 1);
+            Destroy(_handItem);
+        }
+
+        // 데이터베이스를 활용하여 새 아이템 장착
+        ItemData newData = targetItem.GetComponent<ItemData>();
+        if (newData != null)
+        {
+            GameObject prefab = _itemDatabase.GetHandPrefab(newData.itemType);
+
+            // 프리팹이 있다면 생성
+            if (prefab != null)
+            {
+                _handItem = Instantiate(prefab, _handTransform);
+                Destroy(targetItem.gameObject); // 바닥 아이템 삭제
+            }
+            //없다면 그냥 오브젝트 사용
+            else
+            {
+                _handItem = targetItem.gameObject;
+                _handItem.transform.SetParent(_handTransform);
+            }
+
+            _handItem.transform.localPosition = Vector3.zero;
+            _handItem.transform.localRotation = Quaternion.identity;
+
+            SetupHandItemPhysics(_handItem);
+            CurrentItemType = newData.itemType;
+        }
+    }
+
+    // 공통 물리 설정 함수
+    private void SetupHandItemPhysics(GameObject itemObj)
+    {
+        Rigidbody rb = itemObj.GetComponent<Rigidbody>();
+        if (rb != null) { rb.isKinematic = true; rb.detectCollisions = false; }
+
+        Collider col = itemObj.GetComponent<Collider>();
+        if (col != null) col.isTrigger = true;
+    }
+
+    // Z 버튼으로 아이템 드롭 (DropCurrentItem과 연동)
+    public void DropItemInput()
+    {
+        if (CurrentItemType != ItemType.None && Input.GetKeyDown(KeyCode.Z))
+        {
+            DropCurrentItem();
+        }
+    }
+
+    //현재 들고 있는 아이템 드롭
     private void DropCurrentItem()
     {
-        //부모 해제
+        if (_handItem == null) return;
+
         _handItem.transform.SetParent(null);
 
-        //물리 원래 상태로
-        Rigidbody rbOld = _handItem.GetComponent<Rigidbody>();
-        if (rbOld != null)
-        {
-            rbOld.isKinematic = false;
-            rbOld.detectCollisions = true;
-        }
+        Rigidbody rb = _handItem.GetComponent<Rigidbody>();
+        if (rb != null) { rb.isKinematic = false; rb.detectCollisions = true; }
 
-        // 버릴 때는 트리거를 꺼서 바닥에 안착하게 함
-        Collider colOld = _handItem.GetComponent<Collider>();
-        if (colOld != null)
-        {
-            colOld.isTrigger = false;
-        }
+        Collider col = _handItem.GetComponent<Collider>();
+        if (col != null) col.isTrigger = false;
 
         _handItem = null;
         CurrentItemType = ItemType.None;
-        Debug.Log("기존 아이템 버리기 성공");
-
     }
 
     //감지된 오브젝트 리스트를 ItemSensor로 받고
