@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 /*public enum 
 {
@@ -10,9 +11,11 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     private CharacterController characterController;
+    private Animator _animator; 
 
     [Header("이동설정")]
     public float moveSpeed = 5f;
+    private bool _isAssassinating = false; // 암살 수행 중인지 여부
 
     [Header("앉기/서기 설정")]
     [SerializeField] private float _normalHeight = 2f;
@@ -41,10 +44,14 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         characterController = GetComponent<CharacterController>();
+        _animator = GetComponentInChildren<Animator>();
     }
 
     void Update()
     {
+        // 암살 애니메이션 수행 중일 때는 모든 이동/조작 차단
+        if (_isAssassinating) return;
+
         Crouch();
         CheckForAssassination();
         HandleBodyCarry();
@@ -63,7 +70,12 @@ public class PlayerController : MonoBehaviour
 
 
         // 인벤토리가 켜져 있으면 플레이어 이동 로직을 아예 패스함!
-        if (Inventory.isInventoryOpen) return;
+        if (Inventory.isInventoryOpen)
+        {
+            // 애니메이션도 Idle로 고정
+            if (_animator != null) _animator.SetFloat("Speed", 0f);
+            return;
+        }
 
         //키보드 입력 받기
         float moveX = Input.GetAxisRaw("Horizontal");
@@ -72,22 +84,48 @@ public class PlayerController : MonoBehaviour
         //이동 방향 계산
         Vector3 moveDirection = new Vector3(moveX, 0f, moveZ).normalized;
 
-        float currentSpeed = moveSpeed;
+
+        //달리기(왼쪽쉬프트)
+        bool isRunning = Input.GetKey(KeyCode.LeftShift);
+        float runSpeed = moveSpeed * 1.8f;
+        float currentSpeed = isRunning ? runSpeed : moveSpeed;
 
         if (_isCarryingBody)
         {
             currentSpeed = moveSpeed * 0.3f;
         }
 
-        //입력이 있을 때만 이동 및 회전 처리
+        // 이동 처리 및 애니메이션 파라미터 전달
         if (moveDirection.magnitude > 0.1f)
         {
             transform.forward = moveDirection;
-
             characterController.Move(moveDirection * currentSpeed * Time.deltaTime);
+
+            // 이동 중일 때 애니메이터 전달 값:
+            // Shift 안 누름: 1.0f (Walk)
+            // Shift 누름: 2.0f (Run)
+            // 시체 옮기는 중: 0.5f (Slow Walk)
+            // 이동 중일 때 Speed 전달
+            float animSpeedValue = 1.0f;
+            if (isRunning && !_isCarryingBody)
+            {
+                animSpeedValue = 2.0f;
+            }
+
+            if (_animator != null)
+            {
+                _animator.SetFloat("Speed", animSpeedValue);
+            }
+        }
+        else
+        {
+            // 멈췄을 때 Speed를 0으로
+            if (_animator != null)
+            {
+                _animator.SetFloat("Speed", 0f);
+            }
         }
     }
-
 
 
     // C 버튼을 누르면 앉기 + 서기 상태로 변경됨 (물리적 높이를 바꿈)
@@ -135,6 +173,12 @@ public class PlayerController : MonoBehaviour
         // 벽이 아직 남아있는 안전한 경우에만 이동 처리
         float coverMoveSpeed = moveSpeed * 0.5f;
         characterController.Move(moveDirection * coverMoveSpeed * Time.deltaTime);
+
+        // 엄폐 중 이동 시에도 애니메이션 전달
+        if (_animator != null)
+        {
+            _animator.SetFloat("Speed", Mathf.Abs(hInput));
+        }
     }
 
     //스페이스바를 누르면 벽에 엄폐
@@ -219,11 +263,43 @@ public class PlayerController : MonoBehaviour
         // 3. E키 입력 처리
         if (currentTargetEnemy != null && Input.GetKeyDown(KeyCode.E))
         {
+            // 암살/제압 애니메이션 재생
+            if (_animator != null)
+            {
+                _animator.SetTrigger("Attack");
+                //Debug.Log("공격 트리거 발동됨!");
+            }
+
+            else
+            {
+                Debug.LogError("애니메이터를 찾지 못했습니다!");
+            }
+
             currentTargetEnemy.ToggleActionPrompt(false); // UI 끄기
             currentTargetEnemy.TakeAssassination();       // 적 제압
             _lastDetectedEnemy = null;
+
+            StartCoroutine(LockMovementForAssassination(2.0f));
         }
     }
+
+    // 암살 애니메이션 시간 동안 플레이어 동작을 멈추는 코루틴
+    private IEnumerator LockMovementForAssassination(float duration)
+    {
+        _isAssassinating = true;
+
+        // 이동 애니메이션도 즉시 Idle(0)로 멈춤
+        if (_animator != null)
+        {
+            _animator.SetFloat("Speed", 0f);
+        }
+
+        // 지정한 시간(애니메이션 길이)만큼 대기
+        yield return new WaitForSeconds(duration);
+
+        _isAssassinating = false;
+    }
+
 
     //적의 뒤통수에 있는지 판별
     private bool IsBehindEnemy(EnemyController enemy)
