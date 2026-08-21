@@ -25,6 +25,7 @@ public class SlotUI : MonoBehaviour
             //Resource/Icons/폴더에서 스프라이트를 찾아옴
             Sprite icon = Resources.Load<Sprite>($"Icons/{itemType}");
             iconImage.sprite = icon;
+            Debug.Log("아이콘!");
 
             if (count > 1)
             {

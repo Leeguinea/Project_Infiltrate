@@ -16,7 +16,7 @@ MonoBehaviour:
   - itemType: 1
     handPrefab: {fileID: 6161693909194663155, guid: 414be353335588946bf415bc371726a3, type: 3}
   - itemType: 2
-    handPrefab: {fileID: 750854792209919391, guid: bd829d79e9886b74384d5b60036b4ecc, type: 3}
+    handPrefab: {fileID: 8711443452158502014, guid: f20697c3408b9f44fa5e12836094049d, type: 3}
   - itemType: 3
     handPrefab: {fileID: 2047008672317046947, guid: 159d0a02f9b0cd640aaa9e79042933f9, type: 3}
   - itemType: 4
@@ -25,5 +25,3 @@ MonoBehaviour:
     handPrefab: {fileID: 7763146919479739892, guid: b7bcacfb2ab9cd9439c542af91e57cca, type: 3}
   - itemType: 6
     handPrefab: {fileID: 244086404055659696, guid: bfe7508a5402fc4469748304920915f0, type: 3}
-  - itemType: 0
-    handPrefab: {fileID: 2986401555499126218, guid: 06dcb61061163fd48b2b7111fa8e6e33, type: 3}

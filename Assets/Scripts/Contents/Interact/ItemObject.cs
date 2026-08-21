@@ -1,7 +1,7 @@
 using UnityEngine;
 
 //개별 아이템마다 붙는 스크립트
-public class ItemObject : Interactable
+public class ItemObject : MonoBehaviour
 {
     private ItemData _itemData;
 
@@ -10,23 +10,17 @@ public class ItemObject : Interactable
         _itemData = GetComponent<ItemData>();
     }
 
-    //상호작용 결론 
-    public override void OnInteractComplete()
+    // 플레이어가 상호작용 키를 눌렀을 때 직접 호출할 함수
+    public void PickUp()
     {
-        base.OnInteractComplete();
-
         if (_itemData != null)
         {
-            
             Debug.Log($"{_itemData.itemType} 획득!");
-            //TODO: 인벤토리나 PlayerEquip에 _itemData.itemType을 전달하는 로직 추가
+            // TODO: 인벤토리에 아이템 추가하는 로직
         }
-        Destroy(gameObject);
-    }       
-    
-  
 
+        Destroy(gameObject); // 월드에서 제거
+    }
 
 }
-
 
