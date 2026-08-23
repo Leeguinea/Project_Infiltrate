@@ -720,7 +720,7 @@ GameObject:
   - component: {fileID: 325014372}
   m_Layer: 6
   m_Name: ItemDetectTrigger
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -771,8 +771,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.5, y: 1.15, z: 1.5}
-  m_Center: {x: 0, y: 0.82, z: 0}
+  m_Size: {x: 1.5, y: 1.15, z: 0.95}
+  m_Center: {x: 0, y: 0.82, z: 0.39}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -1625,10 +1625,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -2027,7 +2027,7 @@ MonoBehaviour:
   _enemyLayer:
     serializedVersion: 2
     m_Bits: 1024
-  _bodyActionPrompt: {fileID: 1014319733}
+  _bodyActionPrompt: {fileID: 536065517}
   _bodyCheckDistance: 2
   _isCarryingBody: 0
 --- !u!136 &838198323
@@ -2090,7 +2090,7 @@ CharacterController:
   m_Enabled: 1
   serializedVersion: 3
   m_Height: 2
-  m_Radius: 0.5
+  m_Radius: 0.34
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
@@ -4611,7 +4611,7 @@ GameObject:
   - component: {fileID: 4867218878435557983}
   m_Layer: 6
   m_Name: rig_CharRoot
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5526,7 +5526,7 @@ GameObject:
   - component: {fileID: 5621215942740725735}
   m_Layer: 6
   m_Name: casual_Female_G
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
