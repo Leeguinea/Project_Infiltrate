@@ -3,10 +3,12 @@ using UnityEngine;
 public class EnemyStealthAction : MonoBehaviour
 {
     private EnemyController _controller;
+    private Collider _myCollider;
 
     private void Awake()
     {
         _controller = GetComponent<EnemyController>();
+        _myCollider = GetComponent<Collider>();
     }
 
     //기습
@@ -39,11 +41,16 @@ public class EnemyStealthAction : MonoBehaviour
     //플레이어가 시체를 붙잡을 떄
     public void CarryBody(Transform playerTransform)
     {
-        //플레이어의 자식으로 들어가게 함.
-        transform.SetParent(playerTransform);
-        transform.localPosition = new Vector3(0f, -0.5f, -0.8f);
+        // 플레이어와 물리적으로 부딪혀 밀쳐내는 것을 막기 위해 콜라이더 Off
+        if (_myCollider != null)
+        {
+            _myCollider.enabled = false;
+        }
 
-        //정면이 하늘을 보게 함
+        //플레이어의 자식으로 들어가게 함.
+        //적이 누워있는 위치
+        //transform.SetParent(playerTransform);
+        ////transform.localPosition = new Vector3(0f, 0f, 1.0f);
         transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
 
         //리지드바디 잠깐 꺼주기 (끌려다니는 동안 물리 충돌로 버벅거리지 않게 하려고)
@@ -61,6 +68,12 @@ public class EnemyStealthAction : MonoBehaviour
         if (GetComponent<Rigidbody>() != null)
         {
             GetComponent<Rigidbody>().isKinematic = false;
+        }
+
+        // 내려놓았으니 다시 충돌할 수 있도록 콜라이더 On
+        if (_myCollider != null)
+        {
+            _myCollider.enabled = true;
         }
 
         transform.position = new Vector3(transform.position.x, 0.1f, transform.position.z);

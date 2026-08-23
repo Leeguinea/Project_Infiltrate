@@ -1,12 +1,5 @@
 fileFormatVersion: 2
-guid: db4053d1a9e0999428ed31b384873e94
-AssetOrigin:
-  serializedVersion: 1
-  productId: 260446
-  packageName: City People FREE Samples
-  packageVersion: 1.2.0
-  assetPath: Assets/DenysAlmaral/CityPeople/Animations/exercise_warmingUp_170f.fbx
-  uploadId: 833900
+guid: 0daa1bb01bce85a499c8e699354eb2fc
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
@@ -41,8 +34,8 @@ ModelImporter:
       name: exercise_warmingUp_170f
       takeName: Take 001
       internalID: 1827226128182048838
-      firstFrame: 0
-      lastFrame: 170
+      firstFrame: 28
+      lastFrame: 33
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

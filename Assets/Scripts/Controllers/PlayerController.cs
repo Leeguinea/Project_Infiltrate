@@ -95,18 +95,21 @@ public class PlayerController : MonoBehaviour
             currentSpeed = moveSpeed * 0.3f;
         }
 
-        // 이동 처리 및 애니메이션 파라미터 전달
         if (moveDirection.magnitude > 0.1f)
         {
-            transform.forward = moveDirection;
+            // 시체를 끌고 있을 때와 일반 이동일 때의 목표 회전값 계산
+            Vector3 targetLookDirection = _isCarryingBody ? -moveDirection : moveDirection;
+            Quaternion targetRotation = Quaternion.LookRotation(targetLookDirection);
+
+            // Slerp를 사용해 입력한 방향의 반대(등 방향)로 부드럽게 회전(5f: 부드러움정도)
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
+
+            // 캐릭터 이동처리
             characterController.Move(moveDirection * currentSpeed * Time.deltaTime);
 
-            // 이동 중일 때 애니메이터 전달 값:
-            // Shift 안 누름: 1.0f (Walk)
-            // Shift 누름: 2.0f (Run)
-            // 시체 옮기는 중: 0.5f (Slow Walk)
-            // 이동 중일 때 Speed 전달
+            // 이동 중일 때 애니메이터 전달 값
             float animSpeedValue = 1.0f;
+
             if (isRunning && !_isCarryingBody)
             {
                 animSpeedValue = 2.0f;
@@ -125,7 +128,29 @@ public class PlayerController : MonoBehaviour
                 _animator.SetFloat("Speed", 0f);
             }
         }
+
+        //시체를 끌고 있는 중이라면 매 프레임 위치/회전 보정
+        UpdateCarryingBodyPosition();
+
     }
+
+    // 부드러운 위치/회전 추적 메서드
+    private void UpdateCarryingBodyPosition()
+    {
+        if (!_isCarryingBody || _carryingEnemy == null) return;
+
+        // 플레이어 정면 0.8f 위치 계산 (가슴 앞쪽 위치)
+        Vector3 targetPos = transform.position + transform.forward * 0.8f;
+        targetPos.y = transform.position.y - 0.2f; // 높이 조절
+
+        // 1. 위치를 부드럽게 추적 (15f는 따라오는 속도)
+        _carryingEnemy.transform.position = Vector3.Lerp(_carryingEnemy.transform.position, targetPos, Time.deltaTime * 15f);
+
+        // 2. 회전을 부드럽게 추적 (10f는 회전 속도)
+        Quaternion targetRotation = Quaternion.LookRotation(transform.forward) * Quaternion.Euler(90f, 0f, 0f);
+        _carryingEnemy.transform.rotation = Quaternion.Slerp(_carryingEnemy.transform.rotation, targetRotation, Time.deltaTime * 15f);
+    }
+
 
 
     // C 버튼을 누르면 앉기 + 서기 상태로 변경됨 (물리적 높이를 바꿈)
@@ -316,19 +341,29 @@ public class PlayerController : MonoBehaviour
     //죽은 시체 
     private void HandleBodyCarry()
     {
-        // [상태 1] 이미 시체를 끌고 있는 상태라면?  -> 놓는 키(G) 입력만 기다림
+        float h = Input.GetAxisRaw("Horizontal");
+        float v = Input.GetAxisRaw("Vertical");
+
+
+        // 시체 잡기/놓기 키 (G 키)
         if (_isCarryingBody)
         {
-            if (Input.GetKeyDown(KeyCode.G))
+            if ( Input.GetKeyDown(KeyCode.G))
             {
                 if (_carryingEnemy != null)
                 {
-                    _carryingEnemy.DropBody();
+                    _carryingEnemy.DropBody();  
                 }
 
-                // 포스트잇 메모장 초기화
+                // 시체를 놓았으므로 bool 값을 false로 전환
                 _carryingEnemy = null;
                 _isCarryingBody = false;
+
+                // 애니메이터에 시체를 놓았음을 전달
+                if (_animator != null)
+                {
+                    _animator.SetBool("isCarrying", false);
+                }
                 Debug.Log("시체를 바닥에 놓았습니다.");
             }
             return; // 시체를 끌고 있을 때는 아래의 '새로운 시체 찾기'를 실행하지 않고 탈출
@@ -354,6 +389,21 @@ public class PlayerController : MonoBehaviour
         {
             _carryingEnemy = currentTarget;
             _isCarryingBody = true;
+
+            // 플레이어가 시체(적)를 정면으로 바라보도록 회전 처리
+            Vector3 lookTarget = currentTarget.transform.position;
+            lookTarget.y = transform.position.y;
+            Vector3 lookDir = (lookTarget - transform.position).normalized;
+
+            if (lookDir != Vector3.zero)
+            {
+                transform.forward = lookDir;
+            }
+
+            if (_animator != null)
+            {
+                _animator.SetBool("isCarrying", true);
+            }
 
             _carryingEnemy.CarryBody(transform);
             Debug.Log("시체를 옮기는 중입니다.");
