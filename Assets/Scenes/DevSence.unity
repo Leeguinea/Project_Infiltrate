@@ -2027,7 +2027,7 @@ MonoBehaviour:
   _enemyLayer:
     serializedVersion: 2
     m_Bits: 1024
-  _bodyActionPrompt: {fileID: 536065517}
+  _bodyActionPrompt: {fileID: 1014319733}
   _bodyCheckDistance: 2
   _isCarryingBody: 0
 --- !u!136 &838198323
