@@ -16,6 +16,8 @@ public class EnemyStealthAction : MonoBehaviour
     {
         Debug.Log($"[{name}]: 적이 뒤에서 기습당해 제압되었다!");
 
+        gameObject.tag = "Unconscious";
+
         //TODO: 애니메이션으로 교체하고 아래 코드 삭제
         transform.rotation = Quaternion.Euler(90f, transform.eulerAngles.y, transform.eulerAngles.z);
         transform.position = new Vector3(transform.position.x, transform.position.y - 0.5f, transform.position.z);
@@ -33,7 +35,7 @@ public class EnemyStealthAction : MonoBehaviour
             _controller.enabled = false;
         }
 
-        this.enabled = false;
+       //this.enabled = false;
     }
 
 
