@@ -148,6 +148,18 @@ public class CCTVObject : MonoBehaviour
         // CCTV 자신의 위치(transform.position) 기준 가장 가까운 적을 연산
         foreach (EnemyController enemy in allEnemies)
         {
+            // 기절한 적("Unconscious")은 경보 출동 대상에서 제외
+            if (enemy.CompareTag("Unconscious") || enemy.transform.root.CompareTag("Unconscious"))
+            {
+                continue;
+            }
+
+            // 스크립트가 꺼져 있거나 오브젝트가 비활성화된 적 제외
+            if (!enemy.enabled || !enemy.gameObject.activeInHierarchy)
+            {
+                continue;
+            }
+
             float distanceToEnemy = Vector3.Distance(transform.position, enemy.transform.position);
 
             if (distanceToEnemy < shortestDistance)
@@ -165,7 +177,12 @@ public class CCTVObject : MonoBehaviour
             Debug.Log($"[CCTV 포착] 가장 가까운 경비원 [{_assignedEnemy.name}]을 즉시 출동시킵니다.");
             _assignedEnemy.CCTVCommandChase(); // EnemyController 내부의 무전 수신 함수 호출
         }
-        
+        // 출동할 수 있는 적이 없을 때 예외 로그 출력
+        else
+        {
+            Debug.LogWarning("[CCTV 경보] 근처에 출동 가능한 살아있는 경비원이 없습니다!");
+        }
+
     }
 
 
