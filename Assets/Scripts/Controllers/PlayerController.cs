@@ -47,6 +47,8 @@ public class PlayerController : MonoBehaviour
         _animator = GetComponentInChildren<Animator>();
     }
 
+    
+    //애니메이션, 이동 등
     void Update()
     {
         // 암살 애니메이션 수행 중일 때는 모든 이동/조작 차단
@@ -61,31 +63,33 @@ public class PlayerController : MonoBehaviour
             ToggleCover();
         }
 
-        //만약 벽에 엄폐중이라면 좌우(a,d)만 가능
+        // 만약 벽에 엄폐중이라면 좌우(a,d)만 가능
         if (_isCoverd)
         {
             MoveAlongWall();
             return; // 엄폐 중일 때 아래쪽 평상시 이동이 같이 실행되지 않도록 차단
         }
 
-
         // 인벤토리가 켜져 있으면 플레이어 이동 로직을 아예 패스함!
         if (Inventory.isInventoryOpen)
         {
-            // 애니메이션도 Idle로 고정
-            if (_animator != null) _animator.SetFloat("Speed", 0f);
+            if (_animator != null)
+            {
+                _animator.SetFloat("Speed", 0f);
+                _animator.SetFloat("DragSpeed", 0f);
+            }
             return;
         }
 
-        //키보드 입력 받기
+        // 키보드 입력 받기
         float moveX = Input.GetAxisRaw("Horizontal");
         float moveZ = Input.GetAxisRaw("Vertical");
 
-        //이동 방향 계산
+        // 이동 방향 계산
         Vector3 moveDirection = new Vector3(moveX, 0f, moveZ).normalized;
+        bool isMoving = moveDirection.magnitude > 0.1f;
 
-
-        //달리기(왼쪽쉬프트)
+        // 달리기(왼쪽쉬프트)
         bool isRunning = Input.GetKey(KeyCode.LeftShift);
         float runSpeed = moveSpeed * 1.8f;
         float currentSpeed = isRunning ? runSpeed : moveSpeed;
@@ -95,43 +99,36 @@ public class PlayerController : MonoBehaviour
             currentSpeed = moveSpeed * 0.3f;
         }
 
-        if (moveDirection.magnitude > 0.1f)
+        // 물리 이동 및 회전 처리
+        if (isMoving)
         {
-            // 시체를 끌고 있을 때와 일반 이동일 때의 목표 회전값 계산
             Vector3 targetLookDirection = _isCarryingBody ? -moveDirection : moveDirection;
             Quaternion targetRotation = Quaternion.LookRotation(targetLookDirection);
 
-            // Slerp를 사용해 입력한 방향의 반대(등 방향)로 부드럽게 회전(5f: 부드러움정도)
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
-
-            // 캐릭터 이동처리
             characterController.Move(moveDirection * currentSpeed * Time.deltaTime);
-
-            // 이동 중일 때 애니메이터 전달 값
-            float animSpeedValue = 1.0f;
-
-            if (isRunning && !_isCarryingBody)
-            {
-                animSpeedValue = 2.0f;
-            }
-
-            if (_animator != null)
-            {
-                _animator.SetFloat("Speed", animSpeedValue);
-            }
         }
-        else
+
+        // 애니메이터 파라미터 제어 (일반 이동 / 시체 끌기 분리)
+        if (_animator != null)
         {
-            // 멈췄을 때 Speed를 0으로
-            if (_animator != null)
+            if (_isCarryingBody)
             {
+                // 시체를 끌고 있는 상태: DragSpeed로 Drag_Idle(0) <-> Drag_Walk(1) 제어
+                _animator.SetFloat("DragSpeed", isMoving ? 1.0f : 0f);
                 _animator.SetFloat("Speed", 0f);
             }
+            else
+            {
+                // 일반 이동 상태: Speed로 Idle(0) <-> Walk(1) <-> Run(2) 제어
+                float animSpeedValue = isMoving ? (isRunning ? 2.0f : 1.0f) : 0f;
+                _animator.SetFloat("Speed", animSpeedValue);
+                _animator.SetFloat("DragSpeed", 0f);
+            }
         }
 
-        //시체를 끌고 있는 중이라면 매 프레임 위치/회전 보정
+        // 시체를 끌고 있는 중이라면 매 프레임 위치/회전 보정
         UpdateCarryingBodyPosition();
-
     }
 
     // 부드러운 위치/회전 추적 메서드
