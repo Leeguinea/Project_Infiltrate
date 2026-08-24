@@ -18,19 +18,19 @@ public class CCTVObject : MonoBehaviour
     private bool _hasCalledEnemy = false; //적을 호출했는지 여부
 
     [Header("레이어 설정")]
-    [SerializeField] private LayerMask _targetAndObstacleMask; //.검사할 레이어(플레이어 + Obstacle)
+    [SerializeField] private LayerMask _targetAndObstacleMask; //.검사할 레이어(Player , Obstacle, Unconscious가)
 
-    private Transform _playerTransform; //감지된 플레이어의 위치를 기억할 상자
-    private bool _isPlayerInSight = false; //플레이어가 시야 안에 있는지의 여부
+    private Transform _targetTransform; //감지된 플레이어의 위치를 기억할 상자
+    private bool _isTargetInSight = false; //플레이어가 시야 안에 있는지의 여부
 
     private Coroutine _turnOffDelayTimer; //예약 명령을 담는 타이머
     private EnemyController _assignedEnemy = null;
 
     void Update()
     {
-        CheckPlayerVisibility();    // 플레이어 감지
+        CheckTargetVisibility();    // 타겟(플레이어/시체) 시야 감지
 
-        if (_isPlayerInSight)
+        if (_isTargetInSight)
         {
             if (!_hasCalledEnemy)
             {
@@ -57,40 +57,43 @@ public class CCTVObject : MonoBehaviour
         HandleMonitorUI();
     }
 
-    //플레이어가 영역 안에 들어오면
+    //트리거 영역에 플레이어 또는 기절한 적이 진입했을 때
     private void OnTriggerEnter(Collider other)
     {
         //태그 == 플레이어
-        if(other.CompareTag("Player"))
+        if(other.CompareTag("Player") || other.CompareTag("Unconscious") || other.transform.root.CompareTag("Unconscious"))
         {
-            _playerTransform = other.transform;
-            Debug.Log("CCTV 침입자가 진입했습니다!");
+            _targetTransform = other.transform;
+            Debug.Log($"CCTV 감지 영역에 감지 대상 [{other.name} / Tag: {other.tag}] 진입");
+
         }
     }
 
-    //플레이어가 영역(센서)에서 나가면
+    //감지 영역에서 나갔을 때
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") || other.CompareTag("Unconscious") || other.transform.root.CompareTag("Unconscious"))
         {
-            _playerTransform = null;
-            _isPlayerInSight = false;
-            _assignedEnemy = null;
+            if (_targetTransform != null && (other.transform == _targetTransform || other.transform.root == _targetTransform.root))
+            {
+                _targetTransform = null;
+                _isTargetInSight = false;
+                _assignedEnemy = null;
 
-            _detectionTimer = 0f;
-            _hasCalledEnemy = false;
-            Debug.Log("침입자 없음");
+                _detectionTimer = 0f;
+                _hasCalledEnemy = false;
+                Debug.Log("CCTV 영역에서 감지 대상이 벗어남");
+            }
         }
     }
 
-    //거리에 들어온 플레이어가 정면 '시야각' 안에도 있는지 계산하는 함수
-    //Raycast(레이저)
-    private void CheckPlayerVisibility()
+    // 시야각 및 Raycast 감지 함수
+    private void CheckTargetVisibility()
     {
-        if (_playerTransform == null) return;
+        if (_targetTransform == null) return;
 
         // CCTV에서 플레이어의 방향
-        Vector3 directionToPlayer = (_playerTransform.position - transform.position).normalized;
+        Vector3 directionToPlayer = (_targetTransform.position - transform.position).normalized;
 
         // CCTV 정면 방향 ~ 플레이어 방향 사이의 '사이 각도' 
         float angleBetween = Vector3.Angle(transform.forward, directionToPlayer);
@@ -102,11 +105,11 @@ public class CCTVObject : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(transform.position, directionToPlayer, out hit, _viewDistance, _targetAndObstacleMask))
             {
-                if (hit.collider.CompareTag("Player"))
+                if (hit.collider.CompareTag("Player") || hit.collider.CompareTag("Unconscious") || hit.collider.transform.root.CompareTag("Unconscious"))
                 {
-                    if (!_isPlayerInSight)
+                    if (!_isTargetInSight)
                     {
-                        _isPlayerInSight = true;
+                        _isTargetInSight = true;
                         Debug.Log("플레이어가 발각!!");
                     }
                 }
@@ -114,9 +117,9 @@ public class CCTVObject : MonoBehaviour
                 //레이저에 가장 먼저 도달한게 Obstacle 레이어이라면?
                 else
                 {
-                    if (_isPlayerInSight)
+                    if (_isTargetInSight)
                     {
-                        _isPlayerInSight = false;
+                        _isTargetInSight = false;
                         _assignedEnemy = null;
                         Debug.Log("안들킴. 플레이어가 시야각 안에 있지만, 장애물 뒤에 엄폐되어 발각안됨");
                     }
@@ -126,9 +129,9 @@ public class CCTVObject : MonoBehaviour
         //시야각 안에 들어오지 않은 상태
         else
         {
-            if (_isPlayerInSight)
+            if (_isTargetInSight)
             {
-                _isPlayerInSight = false;
+                _isTargetInSight = false;
                 Debug.Log("플레이어가 CCTV의 사각지대로 이동했습니다.");
             }
         }
@@ -188,10 +191,10 @@ public class CCTVObject : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if(_playerTransform != null)
+        if(_targetTransform != null)
         {
-            Gizmos.color = _isPlayerInSight ? Color.red : Color.green;
-            Gizmos.DrawLine(transform.position, _playerTransform.position);
+            Gizmos.color = _isTargetInSight ? Color.red : Color.green;
+            Gizmos.DrawLine(transform.position, _targetTransform.position);
         }
     }
 
@@ -202,7 +205,7 @@ public class CCTVObject : MonoBehaviour
         if (_cctvMonitorUI == null) return;
 
         //플레이어가 시야각 안이라면?
-        if(_isPlayerInSight)
+        if(_isTargetInSight)
         {
             //코루틴(타이머) 취소
             if(_turnOffDelayTimer != null)

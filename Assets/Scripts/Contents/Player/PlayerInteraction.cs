@@ -72,6 +72,8 @@ public class PlayerInteraction : MonoBehaviour
             // 가장 먼저 감지된 콜라이더에서 Interactable 컴포넌트를 추출합니다.
             Interactable interactable = colliders[0].GetComponent<Interactable>();
 
+            if (interactable == null) return;
+
             if (interactable != _currentInteractable)
             {
                 _currentInteractable = interactable;
