@@ -2499,6 +2499,12 @@ MonoBehaviour:
   _targetAndObstacleMask:
     serializedVersion: 2
     m_Bits: 576
+  _playerMask:
+    serializedVersion: 2
+    m_Bits: 64
+  _obstacleMask:
+    serializedVersion: 2
+    m_Bits: 4736
 --- !u!114 &791750743
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4463,7 +4469,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemySensor
   _targetAndObstacleMask:
     serializedVersion: 2
-    m_Bits: 576
+    m_Bits: 4672
+  _playerMask:
+    serializedVersion: 2
+    m_Bits: 64
+  _obstacleMask:
+    serializedVersion: 2
+    m_Bits: 4736
 --- !u!114 &1265536297
 MonoBehaviour:
   m_ObjectHideFlags: 0

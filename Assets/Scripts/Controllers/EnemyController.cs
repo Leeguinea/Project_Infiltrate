@@ -19,7 +19,13 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private float _maxdoubtValue = 100f; // 최대 의심 수치
     [SerializeField] private float _increaseSpeed = 50f; // 시야에 있을 때 초당 게이지 상승량 (2초면 풀)
     [SerializeField] private float _decreaseSpeed = 30f; // 시야에서 벗어났을 때 초당 게이지 감소량
-    
+
+    [Header("추격 포기 및 대기 설정")]
+    [SerializeField] private float _loseSightDuration = 3f; // 시야에서 사라진 후 추격을 포기할 때까지 시간
+    [SerializeField] private float _waitDuration = 3f; //추격을 멈추고 현장에서 대기하는 시간 
+    private float _loseSightTimer = 0f;
+    private float _waitTimer = 0f;
+
     [Header("자식 UI 연결")]
     [SerializeField] private EnemyDoubtUI _myDoubtUI;
     [SerializeField] private GameObject _surpriseUI;
@@ -95,12 +101,75 @@ public class EnemyController : MonoBehaviour
                 HandleSurpriseState();
                 break;
 
+            //단독 _enemyChase.Chase() 대신 시야 확인 및 타이머가 포함된 함수로 변경[나중 주석 삭제]
             case EnemyStateManager.EnemyState.Chase:
-                _enemyChase.Chase();
+                HandleChaseState(isSeen);
                 break;
-            
+
+            //추격을 포기한 후 그 자리에서 몇 초간 대기하는 상태 처리
+            case EnemyStateManager.EnemyState.Wait:
+                HandleWaitState(isSeen);
+                break;
+
         }
     }
+
+    // 시야에서 벗어났을 때 추격 포기 시간을 계산하는 함수
+    private void HandleChaseState(bool isSeen)
+    {
+        //시야에 있으면
+        if(isSeen)
+        {
+            // 플레이어가 눈에 보이면 타이머 초기화 후 추격 계속 진행
+            _loseSightTimer = 0f;
+            _enemyChase.Chase();
+        }
+        // 시야에서 벗어나면
+        else
+        {
+            /// 타이머 누적하며 추격 진행 (마지막 본 위치 이동 등)
+            _loseSightTimer += Time.deltaTime;
+            _enemyChase.Chase();
+
+            // 설정한 시간(_loseSightDuration) 동안 놓치면 Wait(대기) 상태로 전환
+            if (_loseSightTimer >= _loseSightDuration)
+            {
+                _loseSightTimer = 0f;
+                _waitTimer = 0f;
+
+                // 추격 동작 멈춤 처리 (NavMeshAgent 정지)
+                _enemyChase.StopChase();
+                _stateManager.ChangeState(EnemyStateManager.EnemyState.Wait);
+            }
+        }
+
+    }
+
+
+    //  놓친 장소에서 대기 후 순찰로 복귀하는 함수
+    private void HandleWaitState(bool isSeen)
+    {
+        // 대기 중이라도 플레이어를 다시 발견하면 즉시 재추격
+        if (isSeen)
+        {
+            _waitTimer = 0f;
+            _stateManager.ChangeState(EnemyStateManager.EnemyState.Chase);
+            return;
+        }
+
+        _waitTimer += Time.deltaTime;
+
+        // 지정된 대기 시간(_waitDuration)이 지나면 의심도 리셋 후 순찰로 복귀
+        if (_waitTimer >= _waitDuration)
+        {
+            _waitTimer = 0f;
+            _currentDoubtValue = 0f;
+            UpdateDoubtUI();
+
+            _stateManager.ChangeState(EnemyStateManager.EnemyState.Patrol);
+        }
+    }
+
 
     // CCTV가 경비원(Enemy, 나) 지목해서 호출할 때 실행되는 수신 함수
     // 외부(CCTVObject)에서 호출
@@ -148,8 +217,9 @@ public class EnemyController : MonoBehaviour
     {
         if (_stateManager == null) return;
 
-        // 이미 추적 중 or 경직 상태면 HandleDoubtGauge()함수 패스
-        if (_stateManager.CurrentState == EnemyStateManager.EnemyState.Chase || _stateManager.CurrentState == EnemyStateManager.EnemyState.Surprise) return;
+        // Chase, Surprise 외에도 Wait(대기) 상태일 때 의심 게이지 계산을 스킵하도록 예외 추가
+        if (_stateManager.CurrentState == EnemyStateManager.EnemyState.Chase || _stateManager.CurrentState == EnemyStateManager.EnemyState.Surprise || _stateManager.CurrentState == EnemyStateManager.EnemyState.Wait) 
+            return;
 
         // 시야에 있으면?
         if (isPlayerInSight)

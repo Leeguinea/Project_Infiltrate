@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class EnemyStateManager : MonoBehaviour
 {
-    public enum EnemyState { Patrol, Chase, Doubt, Surprise }
+    public enum EnemyState { Patrol, Chase, Doubt, Surprise, Wait }
     public EnemyState CurrentState { get; private set; } = EnemyState.Patrol;
 
     public void ChangeState(EnemyState newState)
