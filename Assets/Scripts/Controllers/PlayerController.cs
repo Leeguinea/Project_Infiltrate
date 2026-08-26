@@ -38,7 +38,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject _bodyActionPrompt;
     [SerializeField] private float _bodyCheckDistance = 2.0f; //시체를 감지할 수 있는 거리
     [SerializeField] private bool _isCarryingBody = false; //현재 시체를 끌고 있는가?
+    public bool IsCarryingBody => _isCarryingBody;
     private EnemyController _carryingEnemy = null; //내가 끌고 있는 그 시체 
+
     //private EnemyController _lastDetectedBody = null;
 
     void Start()
@@ -248,18 +250,22 @@ public class PlayerController : MonoBehaviour
         Collider[] hitEnemies = Physics.OverlapSphere(transform.position, _assassinateDistance, _enemyLayer);
 
         EnemyController currentTargetEnemy = null;
-
+        float closetDistance = float.MaxValue; // 가장 가까운 적(플레이어와의 거리가 가장 짧은 적)
 
         foreach (var enemyCollider in hitEnemies)
         {
             EnemyController enemy = enemyCollider.GetComponent<EnemyController>();
             if (enemy != null && enemy.enabled)
             {
-
                 if (IsBehindEnemy(enemy))
                 {
-                    currentTargetEnemy = enemy; // 암살 가능한 대상을 찾음
-                    break;
+                    //발견된 적 중 플레이어와 가장 가까운 적 선별
+                    float distanceToEnemy = Vector3.Distance(transform.position, enemy.transform.position); //발견한 적과의 거리
+                    if(distanceToEnemy < closetDistance)
+                    {
+                        closetDistance = distanceToEnemy; 
+                        currentTargetEnemy = enemy; // 암살 가능한 대상을 찾음
+                    }
                 }
             }
         }
@@ -285,13 +291,22 @@ public class PlayerController : MonoBehaviour
         // 3. E키 입력 처리
         if (currentTargetEnemy != null && Input.GetKeyDown(KeyCode.E))
         {
+            //e키 입력시, 플레이어가 적을 향하도록 방향 조절
+            Vector3 lookTarget = currentTargetEnemy.transform.position;
+            lookTarget.y = transform.position.y;
+            Vector3 lookDir = (lookTarget - transform.position).normalized;
+
+            if(lookDir != Vector3.zero)
+            {
+                transform.forward = lookDir;
+            }
+
             // 암살/제압 애니메이션 재생
             if (_animator != null)
             {
                 _animator.SetTrigger("Attack");
                 //Debug.Log("공격 트리거 발동됨!");
             }
-
             else
             {
                 Debug.LogError("애니메이터를 찾지 못했습니다!");

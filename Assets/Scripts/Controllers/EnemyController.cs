@@ -224,6 +224,12 @@ public class EnemyController : MonoBehaviour
         // 시야에 있으면?
         if (isPlayerInSight)
         {
+            if (_playerController != null && _playerController.IsCarryingBody)
+            {
+                TriggerAlert();
+                return;
+            }
+
             _stateManager.ChangeState(EnemyStateManager.EnemyState.Doubt);
             _currentDoubtValue += _increaseSpeed * Time.deltaTime;
 
