@@ -360,7 +360,7 @@ public class PlayerController : MonoBehaviour
         // 시체 잡기/놓기 키 (G 키)
         if (_isCarryingBody)
         {
-            if ( Input.GetKeyDown(KeyCode.G))
+            if (Input.GetKeyDown(KeyCode.G))
             {
                 if (_carryingEnemy != null)
                 {

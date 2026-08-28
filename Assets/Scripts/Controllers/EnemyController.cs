@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class EnemyController : MonoBehaviour
 {
@@ -7,7 +8,7 @@ public class EnemyController : MonoBehaviour
 
     [Header("컴포넌트 연결")]
     [SerializeField] public EnemyStateManager _stateManager;
-    [SerializeField] private EnemySensor _enemySensor;
+    [SerializeField] private VisionSensor _sensor;
     [SerializeField] private EnemyPatrol _enemyPatrol;
     [SerializeField] private EnemyChase _enemyChase;
     [SerializeField] private EnemyStealthAction _enemySA;
@@ -48,6 +49,7 @@ public class EnemyController : MonoBehaviour
 
     void Awake()
     {
+        _sensor = GetComponent<VisionSensor>();
         if (player == null)
         {
             GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
@@ -69,21 +71,23 @@ public class EnemyController : MonoBehaviour
         if (player != null)
         {
             _playerController = player.GetComponent<PlayerController>();
-            
+        }
+
+        // 적 데이터에 설정된 시야값으로 센서 수치 동기화!
+        if (_sensor != null && enemyData != null)
+        {
+            _sensor.SetVisionStats(enemyData.viewDistance, enemyData.viewAngle);
         }
     }
 
 
     void Update()
     {
-        if (GameManager.Instance != null && GameManager.Instance.IsGameOver)
-        {
-            return;
-        }
+        if (GameManager.Instance != null && GameManager.Instance.IsGameOver)    return;
 
-        
         // 결과는 센서의 프로퍼티로 확인
-        bool isSeen = _enemySensor.IsPlayerInSight;
+        bool isSeen = _sensor.IsPlayerInSight;
+
 
         HandleDoubtGauge(isSeen);     // 결과를 바탕으로 상태 및 게이지 계산 
 
@@ -101,7 +105,6 @@ public class EnemyController : MonoBehaviour
                 HandleSurpriseState();
                 break;
 
-            //단독 _enemyChase.Chase() 대신 시야 확인 및 타이머가 포함된 함수로 변경[나중 주석 삭제]
             case EnemyStateManager.EnemyState.Chase:
                 HandleChaseState(isSeen);
                 break;

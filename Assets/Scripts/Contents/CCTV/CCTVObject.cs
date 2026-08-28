@@ -110,7 +110,7 @@ public class CCTVObject : MonoBehaviour
                     if (!_isTargetInSight)
                     {
                         _isTargetInSight = true;
-                        Debug.Log("플레이어가 발각!!");
+                        Debug.Log("cctv에 플레이어가 발각!!");
                     }
                 }
 
