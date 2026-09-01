@@ -5,6 +5,16 @@ public class NPCController : MonoBehaviour
 {
     public enum NPCState { Ambient, Panic, Flee }
 
+    [Header("NPC 상태 정보")]
+    public bool isTarget = false;
+    public ClueSet assignedClue;
+
+    [Header("외형 오브젝트 (유니티 Inspector에서 연결)")]
+    public GameObject redHatObject;
+    public GameObject pinkGlassesObject;
+    public GameObject blueBagObject;
+    public GameObject yellowShirtObject;
+
     [Header("이동 및 패닉 설정")]
     [SerializeField] private float _fleeSpeed = 5.0f;
     [SerializeField] private float _panicDuration = 1.5f; // 패닉 유지 시간 (초)
@@ -136,5 +146,22 @@ public class NPCController : MonoBehaviour
                 break;
             }
         }
+    }
+
+    //TargetGenerator 관련.
+    public void ApplyClueSet(ClueSet clueSet, bool targetState)
+    {
+        assignedClue = clueSet;
+        isTarget = targetState;
+
+        ApplyAppearance(clueSet.appearance);
+    }
+
+    private void ApplyAppearance(AppearanceType type)
+    {
+        if (redHatObject) redHatObject.SetActive(type == AppearanceType.RedHat);
+        if (pinkGlassesObject) pinkGlassesObject.SetActive(type == AppearanceType.PinkGlasses);
+        if (blueBagObject) blueBagObject.SetActive(type == AppearanceType.BlueBag);
+        if (yellowShirtObject) yellowShirtObject.SetActive(type == AppearanceType.YellowShirt);
     }
 }
