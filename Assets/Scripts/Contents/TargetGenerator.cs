@@ -1,22 +1,36 @@
-/*using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random; // UnityEngine과 System 둘다 Random 클래스가 있어서 절대 지우면 안됨.
 
 // target 생성
 // 인상착의를 랜덤으로 바꾸는 기능
 public class TargetGenerator : MonoBehaviour
 {
-    [Header("광장 NPC 리스트 (15명)")]
+    [Header("광장 NPC 리스트")]
     public List<NPCController> npcList = new List<NPCController>();
 
     [Header("이번 회차 생성 데이터 (확인용)")]
     public ClueSet currentTargetClue;
     public NPCController targetNPC;
 
+
+    [SerializeField] private Transform npcGroupParent; // [NPC_Group] 부모 오브젝트 연결
+
     private void Start()
     {
         GenerateMission();
     }
+
+    private void Awake()
+    {
+        if (npcGroupParent != null)
+        {
+            // 부모 밑에 있는 모든 NPCController를 자식에서 자동으로 가져옴
+            npcList = new List<NPCController>(npcGroupParent.GetComponentsInChildren<NPCController>());
+        }
+    }
+
 
     public void GenerateMission()
     {
@@ -65,12 +79,12 @@ public class TargetGenerator : MonoBehaviour
 
         do
         {
-            app = (AppearanceType)UnityEngine.Random.Range(0, Enum.GetValues(typeof(AppearanceType)).Length);
-            habit = (HabitType)UnityEngine.Random.Range(0, Enum.GetValues(typeof(HabitType)).Length);
-            loc = (LocationZoneType)UnityEngine.Random.Range(0, Enum.GetValues(typeof(LocationZoneType)).Length);
+            app = (AppearanceType)Random.Range(0, Enum.GetValues(typeof(AppearanceType)).Length);
+            habit = (HabitType)Random.Range(0, Enum.GetValues(typeof(HabitType)).Length);
+            loc = (LocationZoneType)Random.Range(0, Enum.GetValues(typeof(LocationZoneType)).Length);
         }
         while (app == targetClue.appearance && habit == targetClue.habit && loc == targetClue.location);
 
         return new ClueSet(app, habit, loc);
     }
-}*/
+}
