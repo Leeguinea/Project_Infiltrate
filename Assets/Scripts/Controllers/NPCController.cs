@@ -3,7 +3,7 @@ using UnityEngine.AI;
 
 public class NPCController : MonoBehaviour
 {
-    public enum NPCState { Ambient, Panic, Flee }
+    public enum NPCState { Ambient, Panic, Flee }   //평온, 패닉, 도망
 
     [Header("NPC 상태 정보")]
     public bool isTarget = false;
@@ -14,6 +14,10 @@ public class NPCController : MonoBehaviour
     public GameObject pinkGlassesObject;
     public GameObject blueBagObject;
     public GameObject yellowShirtObject;
+
+    [Header("시야 세부 설정")]
+    [SerializeField] private float _viewAngle = 120.0f;          // NPC 시야각 (전방 120도)
+    [SerializeField] private LayerMask _obstacleMask;            // 시야를 가리는 벽/장애물 레이어
 
     [Header("이동 및 패닉 설정")]
     [SerializeField] private float _fleeSpeed = 5.0f;
@@ -29,6 +33,8 @@ public class NPCController : MonoBehaviour
     [SerializeField] private float _wanderRadius = 15.0f;     // 배회 반경
     [SerializeField] private float _minWaitTime = 2.0f;       // 목적지 도착 후 최소 대기시간
     [SerializeField] private float _maxWaitTime = 5.0f;       // 목적지 도착 후 최대 대기시간
+
+
 
     private float _waitTimer = 0f;
     private float _currentWaitTime = 0f;
@@ -51,9 +57,7 @@ public class NPCController : MonoBehaviour
 
     private void Start()
     {
-        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-        if (playerObj != null)
-            _player = playerObj.GetComponent<PlayerController>();
+        _player = FindAnyObjectByType<PlayerController>();
 
         SetState(NPCState.Ambient);
     }
@@ -61,7 +65,6 @@ public class NPCController : MonoBehaviour
     private void Update()
     {
         // 범죄 감지 (Ambient 상태일 때 범죄를 보면 Panic으로 상태 변환)
-        CheckCrime();
         CheckCrime();
 
         switch (_currentState)
@@ -91,12 +94,7 @@ public class NPCController : MonoBehaviour
                     }
                 }
                 break;
-        }
 
-        
-
-        switch (_currentState)
-        {
             case NPCState.Panic:
                 _panicTimer += Time.deltaTime;
                 if (_panicTimer >= _panicDuration)
@@ -123,24 +121,29 @@ public class NPCController : MonoBehaviour
         switch (newState)
         {
             case NPCState.Ambient:
-                //기존: if (_animator) _animator.SetBool("IsFleeing", false);
                 if (_agent)
                 {
                     _agent.isStopped = false;
                     _agent.speed = _wanderSpeed; // 걷기 속도로 설정
                 }
-                if (_animator) _animator.SetBool("IsFleeing", false);
+                if (_animator)
+                {
+                    _animator.SetBool("IsWalking", false);
+                    _animator.SetBool("IsFleeing", false);
+                }
 
-                // 처음 시작할 때 바로 랜덤 목적지 설정
-                SetRandomWanderDestination();
+                SetRandomWanderDestination(); // 처음 시작할 때 바로 랜덤 목적지 설정
                 break;
 
             case NPCState.Panic:
-                if (_agent) _agent.isStopped = true; // 패닉 동안 멈춤
+                if (_agent) 
+                    _agent.isStopped = true; // 패닉 동안 멈춤
+
                 if (_animator)
                 {
+                    _animator.SetBool("IsWalking", false);
                     _animator.SetBool("IsFleeing", false);
-                    _animator.SetTrigger("OnPanic");
+                    _animator.SetTrigger("OnPanic");       //AnyState ->Panic
                 }
                 break;
 
@@ -150,7 +153,12 @@ public class NPCController : MonoBehaviour
                     _agent.isStopped = false;
                     _agent.speed = _fleeSpeed;
                 }
-                if (_animator) _animator.SetBool("IsFleeing", true);
+                if (_animator)
+                {
+                    _animator.SetBool("IsWalking", false);
+                    _animator.SetBool("IsFleeing", true);
+                }
+                
 
                 // 도망 시작할 때 딱 한 번만 목적지 찍기
                 SetRandomFleeDestination();
@@ -197,6 +205,8 @@ public class NPCController : MonoBehaviour
         // 1. 시체 업은 플레이어 감지
         if (_sensor != null && _sensor.IsPlayerInSight)
         {
+            // 디버그용 로그 추가
+            Debug.Log($"[NPC] 플레이어 시야 감지됨! / Player null 여부: {(_player == null)} / IsCarryingBody: {(_player != null && _player.IsCarryingBody)}");
             if (_player != null && _player.IsCarryingBody)
             {
                 SetState(NPCState.Panic);
@@ -210,8 +220,23 @@ public class NPCController : MonoBehaviour
         {
             if (col.CompareTag(_unconsciousTag))
             {
-                SetState(NPCState.Panic);
-                break;
+                // NPC 위치에서 시체 위치로 향하는 방향 계산
+                Vector3 dirToBody = (col.transform.position - transform.position).normalized;
+
+                //  NPC의 전방 바라보는 방향과 시체 방향 사이의 각도 계산 (시야각 내에 있는지)
+                if (Vector3.Angle(transform.forward, dirToBody) < _viewAngle * 0.5f)
+                {
+                    float distToBody = Vector3.Distance(transform.position, col.transform.position);
+
+                    //
+                    // Raycast를 쏴서 NPC와 시체 사이에 벽(Obstacle)이 없는지 확인
+                    // (NPC 눈높이인 Vector3.up * 1.5f 지점에서 레이 발사)
+                    if (!Physics.Raycast(transform.position + Vector3.up * 1.5f, dirToBody, distToBody, _obstacleMask))
+                    {
+                        SetState(NPCState.Panic);
+                        break;
+                    }
+                }
             }
         }
     }
