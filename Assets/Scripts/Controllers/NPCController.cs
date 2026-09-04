@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -20,9 +21,11 @@ public class NPCController : MonoBehaviour
     [SerializeField] private LayerMask _obstacleMask;            // 시야를 가리는 벽/장애물 레이어
 
     [Header("이동 및 패닉 설정")]
-    [SerializeField] private float _fleeSpeed = 5.0f;
-    [SerializeField] private float _panicDuration = 1.5f; // 패닉 유지 시간 (초)
-    [SerializeField] private float _fleeDistance = 15.0f;  // 도망칠 랜덤 거리
+    [SerializeField] private float _fleeSpeed = 3.0f;
+    [SerializeField] private float _panicDuration = 2.0f; // 패닉 유지 시간 (초)
+    [SerializeField] private float _fleeDistance = 30.0f;  // 도망칠 랜덤 거리
+    [SerializeField] private float _panicPropagateRadius = 6.0f; // 주변 NPC에게 패닉을 전파할 반경
+    public NPCState CurrentState => _currentState;
 
     [Header("범죄 감지 설정")]
     [SerializeField] private float _bodyDetectRadius = 8.0f;
@@ -33,8 +36,6 @@ public class NPCController : MonoBehaviour
     [SerializeField] private float _wanderRadius = 15.0f;     // 배회 반경
     [SerializeField] private float _minWaitTime = 2.0f;       // 목적지 도착 후 최소 대기시간
     [SerializeField] private float _maxWaitTime = 5.0f;       // 목적지 도착 후 최대 대기시간
-
-
 
     private float _waitTimer = 0f;
     private float _currentWaitTime = 0f;
@@ -48,6 +49,8 @@ public class NPCController : MonoBehaviour
     private NPCState _currentState = NPCState.Ambient;
     private float _panicTimer = 0f;
 
+    private bool _isPendingPanic = false; // 이미 패닉 대기 중인지 체크하는 플래그
+
     private void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
@@ -60,6 +63,11 @@ public class NPCController : MonoBehaviour
         _player = FindAnyObjectByType<PlayerController>();
 
         SetState(NPCState.Ambient);
+    }
+
+    private void OnDisable()
+    {
+        _isPendingPanic = false;
     }
 
     private void Update()
@@ -133,6 +141,7 @@ public class NPCController : MonoBehaviour
                 }
 
                 SetRandomWanderDestination(); // 처음 시작할 때 바로 랜덤 목적지 설정
+
                 break;
 
             case NPCState.Panic:
@@ -145,6 +154,8 @@ public class NPCController : MonoBehaviour
                     _animator.SetBool("IsFleeing", false);
                     _animator.SetTrigger("OnPanic");       //AnyState ->Panic
                 }
+
+                PropagatePanic(); // 패닉 상태에 진입하자마자 주변 NPC 및 경비에게 연쇄 전파
                 break;
 
             case NPCState.Flee:
@@ -259,5 +270,63 @@ public class NPCController : MonoBehaviour
         if (pinkGlassesObject) pinkGlassesObject.SetActive(type == AppearanceType.PinkGlasses);
         if (blueBagObject) blueBagObject.SetActive(type == AppearanceType.BlueBag);
         if (yellowShirtObject) yellowShirtObject.SetActive(type == AppearanceType.YellowShirt);
+    }
+
+    // 연쇄 패닉
+    //주변 NPC에게 비명을 지르고 패닉을 전파
+    private void PropagatePanic()
+    {
+        Collider[] hits = Physics.OverlapSphere(transform.position, _panicPropagateRadius);
+        foreach (var col in hits)
+        {
+            // 자기 자신 제외한 다른 일반 NPC 연쇄 패닉
+            if (col.gameObject != gameObject && col.TryGetComponent<NPCController>(out var otherNPC))
+            {
+                if (otherNPC.CurrentState == NPCState.Ambient)
+                {
+                    // NPC와 나 사이에 벽이 있는지 검사 (벽이 없어야 비명이 들림)
+                    Vector3 dirToOther = (otherNPC.transform.position - transform.position).normalized;
+                    float distToOther = Vector3.Distance(transform.position, otherNPC.transform.position);
+
+                    if (!Physics.Raycast(transform.position + Vector3.up * 1.5f, dirToOther, distToOther, _obstacleMask))
+                    {
+                        float soundDelay = distToOther * 0.03f; //거리가 멀수록 조금 더 늦게 들림. 
+                        float reactionDelay = Random.Range(0.1f, 0.25f); //NPC 개개인의 반응 속도 차이 (0.1 ~ 0.25c초 사이의 무작위 값)
+                        float totalDelay = soundDelay + reactionDelay;
+
+                        //코루틴으로 시간 차
+                        otherNPC.TriggerPanicWithDelay(totalDelay);
+                    }
+                }
+            }
+
+            // 주변에 경비(Enemy/Guard)가 있다면 경계 태세 유발
+            if (col.CompareTag("Enemy"))
+            {
+                //TODO: 경비 ai와 연동
+                Debug.Log($"[NPC] 주변 경비({col.name})에게 범죄 상황 인지시킴!");
+            }
+        }
+    }
+    
+    //패닉 예약 함수
+    //범죄 현장 발견한 npc가 panic인 상태를 목격한 다른 npc
+    public void TriggerPanicWithDelay(float delay)
+    {
+        //이미 패닉 상태이거나, 패닉 대기 중이라면 중복 실행 방지
+        if (CurrentState == NPCState.Ambient || _isPendingPanic) return;
+        
+        StartCoroutine(PanicRoutine(delay));
+    }
+
+    private IEnumerator PanicRoutine(float delay)
+    {
+        _isPendingPanic = true;
+
+        yield return new WaitForSeconds(delay);
+        //TODO: 이 시간 동안 '어??'하고 뭐지하는 느낌의 애니메이션을 넣기. 해당 방향으로 쳐다보기
+        
+        _isPendingPanic = false;
+        SetState(NPCState.Panic);// 여기서 Panic이 되면서 이 NPC도 PropagatePanic()을 부르게 됨!
     }
 }
