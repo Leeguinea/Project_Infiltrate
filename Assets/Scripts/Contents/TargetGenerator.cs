@@ -7,13 +7,14 @@ using Random = UnityEngine.Random; // UnityEngine과 System 둘다 Random 클래스가 
 // 인상착의를 랜덤으로 바꾸는 기능
 public class TargetGenerator : MonoBehaviour
 {
+    public static TargetGenerator Instance { get; private set; }
+
     [Header("광장 NPC 리스트")]
     public List<NPCController> npcList = new List<NPCController>();
 
     [Header("이번 회차 생성 데이터 (확인용)")]
     public ClueSet currentTargetClue;
     public NPCController targetNPC;
-
 
     [SerializeField] private Transform npcGroupParent; // [NPC_Group] 부모 오브젝트 연결
 
@@ -24,6 +25,16 @@ public class TargetGenerator : MonoBehaviour
 
     private void Awake()
     {
+        // 씬 내에 1개만 존재
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+
         if (npcGroupParent != null)
         {
             // 부모 밑에 있는 모든 NPCController를 자식에서 자동으로 가져옴
