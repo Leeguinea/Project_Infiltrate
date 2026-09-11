@@ -56,10 +56,24 @@ public class PlayerController : MonoBehaviour
         // 암살 애니메이션 수행 중일 때는 모든 이동/조작 차단
         if (_isAssassinating) return;
 
+        // NPC 심문/대화 UI가 켜져 있으면 탈출
+        // (대화 중에는 암살, 시체 들기, 앉기, 이동 등 모든 조작을 막아야 하므로 최상단에 위치)
+        if (AccuseSystem.Instance != null && AccuseSystem.Instance.IsInteracting)
+        {
+            if (_animator != null)
+            {
+                _animator.SetFloat("Speed", 0f);
+                _animator.SetFloat("DragSpeed", 0f);
+            }
+            return;
+        }
+
+        //앉기, 암살 검사, 시체운반
         Crouch();
         CheckForAssassination();
         HandleBodyCarry();
 
+        //벽엄폐 처리
         if (Input.GetKeyDown(KeyCode.Space))
         {
             ToggleCover();

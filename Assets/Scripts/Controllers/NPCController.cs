@@ -177,6 +177,32 @@ public class NPCController : MonoBehaviour
         }
     }
 
+    //플레이어를 향해 멈춰 서서 바라보기 (상호작용용)
+    public void StopAndLookAt(Transform playerTransform)
+    {
+        if (_agent != null && _agent.enabled)
+        {
+            _agent.isStopped = true;
+        }
+
+        Vector3 lookDirection = (playerTransform.position - transform.position).normalized;
+        lookDirection.y = 0;
+
+        if (lookDirection != Vector3.zero)
+        {
+            transform.rotation = Quaternion.LookRotation(lookDirection);
+        }
+    }
+
+    // 상호작용 끝. 원래 행동대로 함.
+    public void ResumeMovement()
+    {
+        if (_agent != null && _agent.enabled)
+        {
+            _agent.isStopped = false;
+        }
+    }
+
     // 주변 NavMesh 상의 랜덤 위치를 목적지로 지정하는 함수
     private void SetRandomWanderDestination()
     {
@@ -216,8 +242,7 @@ public class NPCController : MonoBehaviour
         // 1. 시체 업은 플레이어 감지
         if (_sensor != null && _sensor.IsPlayerInSight)
         {
-            // 디버그용 로그 추가
-            Debug.Log($"[NPC] 플레이어 시야 감지됨! / Player null 여부: {(_player == null)} / IsCarryingBody: {(_player != null && _player.IsCarryingBody)}");
+            
             if (_player != null && _player.IsCarryingBody)
             {
                 SetState(NPCState.Panic);
