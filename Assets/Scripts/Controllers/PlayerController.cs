@@ -101,9 +101,23 @@ public class PlayerController : MonoBehaviour
         float moveX = Input.GetAxisRaw("Horizontal");
         float moveZ = Input.GetAxisRaw("Vertical");
 
-        // 이동 방향 계산
-        Vector3 moveDirection = new Vector3(moveX, 0f, moveZ).normalized;
+        // 메인 카메라의 방향 가져오기 (정면의 마이너스 값 = 후면, 오른쪽의 마이너스 값 = 왼쪽)
+        Transform cameraTransform = Camera.main.transform;
+        Vector3 camForward = cameraTransform.forward;
+        Vector3 camRight = cameraTransform.right;
+
+        //Y축 고개를 숙이거나 들 때 캐릭터가 땅속으로 들어가거나 하늘로 날지 않도록 0으로 제거
+        camForward.y = 0f;
+        camRight.y = 0f;
+        camForward.Normalize();
+        camRight.Normalize();
+
+
+        //카메라 방향을 기준으로 최종 이동 방향 계산. (8방향)
+        Vector3 moveDirection = (camForward * moveZ + camRight * moveX).normalized;
         bool isMoving = moveDirection.magnitude > 0.1f;
+
+
 
         // 달리기(왼쪽쉬프트)
         bool isRunning = Input.GetKey(KeyCode.LeftShift);
