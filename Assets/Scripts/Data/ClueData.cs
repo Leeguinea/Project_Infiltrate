@@ -2,13 +2,24 @@ using System;
 using UnityEngine;
 
 #region Enum Definitions
-// 1. 외형 단서 (Color / Mesh ON-OFF)
+// 1. 외형 단서
 public enum AppearanceType
 {
-    RedHat,         // 빨간 모자
-    PinkGlasses,    // 분홍 선글라스
-    BlueBag,        // 파란 가방
-    YellowShirt     // 노란 셔츠
+    None = 0,
+
+    // 모자 그룹 (1 ~ 5)
+    Hat1 = 1,
+    Hat2 = 2,
+    Hat3 = 3,
+    Hat4 = 4,
+    Hat5 = 5,
+
+    // 안경 그룹 (6 ~ 10)
+    Glasses1 = 6,
+    Glasses2 = 7,
+    Glasses3 = 8,
+    Glasses4 = 9,
+    Glasses5 = 10
 }
 
 // 2. 습관/행동 단서 (Animation Trigger)
@@ -51,11 +62,17 @@ public static class ClueTextUtility
     {
         return type switch
         {
-            AppearanceType.RedHat => "Wearing: Red Hat",
-            AppearanceType.PinkGlasses => "Wearing: Pink Glasses",
-            AppearanceType.BlueBag => "Carrying: Blue Bag",
-            AppearanceType.YellowShirt => "Wearing: Yellow Shirt",
-            _ => string.Empty
+            AppearanceType.Hat1 => "Wearing: Cap 01",
+            AppearanceType.Hat2 => "Wearing: Cap 02",
+            AppearanceType.Hat3 => "Wearing: Cap 03",
+            AppearanceType.Hat4 => "Wearing: Cap 04",
+            AppearanceType.Hat5 => "Wearing: Cap 05",
+            AppearanceType.Glasses1 => "Wearing: Glasses 01",
+            AppearanceType.Glasses2 => "Wearing: Glasses 02",
+            AppearanceType.Glasses3 => "Wearing: Glasses 03",
+            AppearanceType.Glasses4 => "Wearing: Glasses 04",
+            AppearanceType.Glasses5 => "Wearing: Glasses 05",
+            _ => "Wearing: Nothing special"
         };
     }
 

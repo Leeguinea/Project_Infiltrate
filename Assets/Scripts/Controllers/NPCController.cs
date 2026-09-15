@@ -10,11 +10,10 @@ public class NPCController : MonoBehaviour
     public bool isTarget = false;
     public ClueSet assignedClue;
 
-    [Header("외형 오브젝트 (유니티 Inspector에서 연결)")]
-    public GameObject redHatObject;
-    public GameObject pinkGlassesObject;
-    public GameObject blueBagObject;
-    public GameObject yellowShirtObject;
+    [Header("외형 오브젝트 배열")]
+    public GameObject[] hatObjects;    
+    public GameObject[] glassesObjects; 
+
 
     [Header("시야 세부 설정")]
     [SerializeField] private float _viewAngle = 120.0f;          // NPC 시야각 (전방 120도)
@@ -56,6 +55,26 @@ public class NPCController : MonoBehaviour
         _agent = GetComponent<NavMeshAgent>();
         _animator = GetComponent<Animator>();
         _sensor = GetComponent<VisionSensor>();
+
+
+        // 휴머노이드 뼈대에서 Head 위치 자동 탐색
+        Transform headTransform = _animator != null ? _animator.GetBoneTransform(HumanBodyBones.Head) : null;
+
+        if (headTransform != null)
+        {
+            hatObjects = new GameObject[5];
+            glassesObjects = new GameObject[5];
+
+            // Head 자식 중 "Hat 01~05", "Glasses 01~05" 이름으로 찾아서 배열에 할당
+            for (int i = 0; i < 5; i++)
+            {
+                Transform hat = headTransform.Find($"Hat 0{i + 1}");
+                if (hat != null) hatObjects[i] = hat.gameObject;
+
+                Transform glasses = headTransform.Find($"Glasses 0{i + 1}");
+                if (glasses != null) glassesObjects[i] = glasses.gameObject;
+            }
+        }
     }
 
     private void Start()
@@ -278,24 +297,6 @@ public class NPCController : MonoBehaviour
     }
 
 
-    // 단서 시스템 연동: 단서 세트를 전달받아 NPC에게 적용
-    /// TargetGenerator가 호출해 주는 함수
-
-    public void ApplyClueSet(ClueSet clueSet, bool targetState)
-    {
-        assignedClue = clueSet;
-        isTarget = targetState;
-
-        ApplyAppearance(clueSet.appearance);
-    }
-
-    private void ApplyAppearance(AppearanceType type)
-    {
-        if (redHatObject) redHatObject.SetActive(type == AppearanceType.RedHat);
-        if (pinkGlassesObject) pinkGlassesObject.SetActive(type == AppearanceType.PinkGlasses);
-        if (blueBagObject) blueBagObject.SetActive(type == AppearanceType.BlueBag);
-        if (yellowShirtObject) yellowShirtObject.SetActive(type == AppearanceType.YellowShirt);
-    }
 
     // 연쇄 패닉
     //주변 NPC에게 비명을 지르고 패닉을 전파
@@ -339,7 +340,7 @@ public class NPCController : MonoBehaviour
     public void TriggerPanicWithDelay(float delay)
     {
         //이미 패닉 상태이거나, 패닉 대기 중이라면 중복 실행 방지
-        if (CurrentState == NPCState.Ambient || _isPendingPanic) return;
+        if (CurrentState != NPCState.Ambient || _isPendingPanic) return;
         
         StartCoroutine(PanicRoutine(delay));
     }
@@ -353,5 +354,65 @@ public class NPCController : MonoBehaviour
         
         _isPendingPanic = false;
         SetState(NPCState.Panic);// 여기서 Panic이 되면서 이 NPC도 PropagatePanic()을 부르게 됨!
+    }
+
+
+
+    // 단서 시스템 연동: 단서 세트를 전달받아 NPC에게 적용
+    /// TargetGenerator가 호출해 주는 함수
+
+    public void ApplyClueSet(ClueSet clueSet, bool targetState)
+    {
+
+        assignedClue = clueSet;
+        isTarget = targetState;
+        ApplyAppearance(clueSet.appearance);
+    }
+
+    // ClueData.cs 참조
+    private void ApplyAppearance(AppearanceType type)
+    {
+        ResetAppearance();
+
+        int typeIndex = (int)type; // Enum을 정수로 변환
+
+        // 모자 (1 ~ 5)
+        if (typeIndex >= 1 && typeIndex <= 5)
+        {
+            SetHat(typeIndex - 1);
+        }
+        // 안경 (6 ~ 10)
+        else if (typeIndex >= 6 && typeIndex <= 10)
+        {
+            SetGlasses(typeIndex - 6);
+        }
+    }
+
+
+    // 특정 모자만 킴
+    public void SetHat(int hatIndex)
+    {
+        for (int i = 0; i < hatObjects.Length; i++)
+        {
+            if (hatObjects[i] != null)
+                hatObjects[i].SetActive(i == hatIndex);
+        }
+    }
+
+    // 특정 안경만 킴
+    public void SetGlasses(int glassesIndex)
+    {
+        for (int i = 0; i < glassesObjects.Length; i++)
+        {
+            if (glassesObjects[i] != null)
+                glassesObjects[i].SetActive(i == glassesIndex);
+        }
+    }
+
+    // 외형 전체 초기화 (숨기기)
+    public void ResetAppearance()
+    {
+        foreach (var hat in hatObjects) if (hat) hat.SetActive(false);
+        foreach (var glasses in glassesObjects) if (glasses) glasses.SetActive(false);
     }
 }
