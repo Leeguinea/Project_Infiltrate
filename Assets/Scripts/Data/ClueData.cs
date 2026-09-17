@@ -22,6 +22,21 @@ public enum AppearanceType
     Glasses5 = 10
 }
 
+// 입모양 단서 (1~10)
+public enum MouthType
+{
+    Mouth01 = 1,
+    Mouth02 = 2,
+    Mouth03 = 3,
+    Mouth04 = 4,
+    Mouth05 = 5,
+    Mouth06 = 6,
+    Mouth07 = 7,
+    Mouth08 = 8,
+    Mouth09 = 9,
+    Mouth10 = 10
+}
+
 // 2. 습관/행동 단서 (Animation Trigger)
 public enum HabitType
 {
@@ -33,9 +48,11 @@ public enum HabitType
 // 3. 선호 장소 단서 (Zone Tag/Collider)
 public enum LocationZoneType
 {
-    NearFountain,       // 분수대 인근
-    OnBench,            // 벤치 주변
-    NearVendingMachine  // 자판기 근처
+    // TODO: 필요시 CommercialDistrict, ParkArea 등 실제 이름으로 변경
+    ZoneA, // 광장 구역
+    ZoneB, // 공원 구역
+    ZoneC, // 주택가 구역
+    ZoneD  // 상가 구역
 }
 #endregion
 
@@ -44,12 +61,14 @@ public enum LocationZoneType
 public struct ClueSet
 {
     public AppearanceType appearance;
+    public MouthType mouth;         
     public HabitType habit;
     public LocationZoneType location;
 
-    public ClueSet(AppearanceType appearance, HabitType habit, LocationZoneType location)
+    public ClueSet(AppearanceType appearance, MouthType mouth, HabitType habit, LocationZoneType location)
     {
         this.appearance = appearance;
+        this.mouth = mouth;
         this.habit = habit;
         this.location = location;
     }
@@ -76,6 +95,24 @@ public static class ClueTextUtility
         };
     }
 
+    public static string GetMouthText(MouthType type)
+    {
+        return type switch
+        {
+            MouthType.Mouth01 => "Mouth: Expression 01",
+            MouthType.Mouth02 => "Mouth: Expression 02",
+            MouthType.Mouth03 => "Mouth: Expression 03",
+            MouthType.Mouth04 => "Mouth: Expression 04",
+            MouthType.Mouth05 => "Mouth: Expression 05",
+            MouthType.Mouth06 => "Mouth: Expression 06",
+            MouthType.Mouth07 => "Mouth: Expression 07",
+            MouthType.Mouth08 => "Mouth: Expression 08",
+            MouthType.Mouth09 => "Mouth: Expression 09",
+            MouthType.Mouth10 => "Mouth: Expression 10",
+            _ => "Mouth: None"
+        };
+    }
+
     public static string GetHabitText(HabitType type)
     {
         return type switch
@@ -91,9 +128,10 @@ public static class ClueTextUtility
     {
         return type switch
         {
-            LocationZoneType.NearFountain => "Location: Loitering near fountain",
-            LocationZoneType.OnBench => "Location: Staying near bench",
-            LocationZoneType.NearVendingMachine => "Location: Seen near vending machine",
+            LocationZoneType.ZoneA => "Location: Last seen in Zone A",
+            LocationZoneType.ZoneB => "Location: Last seen in Zone B",
+            LocationZoneType.ZoneC => "Location: Last seen in Zone C",
+            LocationZoneType.ZoneD => "Location: Last seen in Zone D",
             _ => string.Empty
         };
     }

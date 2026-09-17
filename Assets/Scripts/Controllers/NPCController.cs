@@ -11,12 +11,13 @@ public class NPCController : MonoBehaviour
     public ClueSet assignedClue;
 
     [Header("외형 오브젝트 배열")]
-    public GameObject[] hatObjects;    
-    public GameObject[] glassesObjects; 
+    public GameObject[] hatObjects;
+    public GameObject[] glassesObjects;
+    public GameObject[] mouthObjects;
 
 
     [Header("시야 세부 설정")]
-    [SerializeField] private float _viewAngle = 120.0f;          // NPC 시야각 (전방 120도)
+    [SerializeField] private float _viewAngle = 120.0f;           // NPC 시야각 (전방 120도)
     [SerializeField] private LayerMask _obstacleMask;            // 시야를 가리는 벽/장애물 레이어
 
     [Header("이동 및 패닉 설정")]
@@ -32,9 +33,9 @@ public class NPCController : MonoBehaviour
 
     [Header("일상 배회 설정")]
     [SerializeField] private float _wanderSpeed = 2.0f;       // 걷는 속도 (도망 속도보다 느리게)
-    [SerializeField] private float _wanderRadius = 15.0f;     // 배회 반경
-    [SerializeField] private float _minWaitTime = 2.0f;       // 목적지 도착 후 최소 대기시간
-    [SerializeField] private float _maxWaitTime = 5.0f;       // 목적지 도착 후 최대 대기시간
+    [SerializeField] private float _wanderRadius = 15.0f;      // 배회 반경
+    [SerializeField] private float _minWaitTime = 2.0f;        // 목적지 도착 후 최소 대기시간
+    [SerializeField] private float _maxWaitTime = 5.0f;        // 목적지 도착 후 최대 대기시간
 
     private float _waitTimer = 0f;
     private float _currentWaitTime = 0f;
@@ -56,7 +57,6 @@ public class NPCController : MonoBehaviour
         _animator = GetComponent<Animator>();
         _sensor = GetComponent<VisionSensor>();
 
-
         // 휴머노이드 뼈대에서 Head 위치 자동 탐색
         Transform headTransform = _animator != null ? _animator.GetBoneTransform(HumanBodyBones.Head) : null;
 
@@ -64,17 +64,40 @@ public class NPCController : MonoBehaviour
         {
             hatObjects = new GameObject[5];
             glassesObjects = new GameObject[5];
+            mouthObjects = new GameObject[10];
 
-            // Head 자식 중 "Hat 01~05", "Glasses 01~05" 이름으로 찾아서 배열에 할당
-            for (int i = 0; i < 5; i++)
+            // Head 아래에 있는 모든 자식/손자/폴더를 한 번에 싹 가져옴 (경로 무시, 이름으로만 매칭)
+            Transform[] allChildren = headTransform.GetComponentsInChildren<Transform>(true);
+
+            foreach (var child in allChildren)
             {
-                Transform hat = headTransform.Find($"Hat 0{i + 1}");
-                if (hat != null) hatObjects[i] = hat.gameObject;
+                // 1. 모자 매칭 (Hat 01 ~ Hat 05)
+                for (int i = 0; i < 5; i++)
+                {
+                    if (child.name == $"Hat 0{i + 1}")
+                    {
+                        hatObjects[i] = child.gameObject;
+                    }
 
-                Transform glasses = headTransform.Find($"Glasses 0{i + 1}");
-                if (glasses != null) glassesObjects[i] = glasses.gameObject;
+                    // 2. 안경 매칭 (Glasses 01 ~ Glasses 05)
+                    if (child.name == $"Glasses 0{i + 1}")
+                    {
+                        glassesObjects[i] = child.gameObject;
+                    }
+                }
+
+                // 3. 입 매칭 (Mouth 01 ~ Mouth 10)
+                for (int i = 0; i < 10; i++)
+                {
+                    if (child.name == $"Mouth {(i + 1):D2}")
+                    {
+                        mouthObjects[i] = child.gameObject;
+                    }
+                }
             }
         }
+
+        ResetAppearance();
     }
 
     private void Start()
@@ -164,7 +187,7 @@ public class NPCController : MonoBehaviour
                 break;
 
             case NPCState.Panic:
-                if (_agent) 
+                if (_agent)
                     _agent.isStopped = true; // 패닉 동안 멈춤
 
                 if (_animator)
@@ -188,7 +211,7 @@ public class NPCController : MonoBehaviour
                     _animator.SetBool("IsWalking", false);
                     _animator.SetBool("IsFleeing", true);
                 }
-                
+
 
                 // 도망 시작할 때 딱 한 번만 목적지 찍기
                 SetRandomFleeDestination();
@@ -261,7 +284,7 @@ public class NPCController : MonoBehaviour
         // 1. 시체 업은 플레이어 감지
         if (_sensor != null && _sensor.IsPlayerInSight)
         {
-            
+
             if (_player != null && _player.IsCarryingBody)
             {
                 SetState(NPCState.Panic);
@@ -286,6 +309,7 @@ public class NPCController : MonoBehaviour
                     //
                     // Raycast를 쏴서 NPC와 시체 사이에 벽(Obstacle)이 없는지 확인
                     // (NPC 눈높이인 Vector3.up * 1.5f 지점에서 레이 발사)
+                    //
                     if (!Physics.Raycast(transform.position + Vector3.up * 1.5f, dirToBody, distToBody, _obstacleMask))
                     {
                         SetState(NPCState.Panic);
@@ -334,14 +358,14 @@ public class NPCController : MonoBehaviour
             }
         }
     }
-    
+
     //패닉 예약 함수
     //범죄 현장 발견한 npc가 panic인 상태를 목격한 다른 npc
     public void TriggerPanicWithDelay(float delay)
     {
         //이미 패닉 상태이거나, 패닉 대기 중이라면 중복 실행 방지
         if (CurrentState != NPCState.Ambient || _isPendingPanic) return;
-        
+
         StartCoroutine(PanicRoutine(delay));
     }
 
@@ -351,7 +375,7 @@ public class NPCController : MonoBehaviour
 
         yield return new WaitForSeconds(delay);
         //TODO: 이 시간 동안 '어??'하고 뭐지하는 느낌의 애니메이션을 넣기. 해당 방향으로 쳐다보기
-        
+
         _isPendingPanic = false;
         SetState(NPCState.Panic);// 여기서 Panic이 되면서 이 NPC도 PropagatePanic()을 부르게 됨!
     }
@@ -363,10 +387,11 @@ public class NPCController : MonoBehaviour
 
     public void ApplyClueSet(ClueSet clueSet, bool targetState)
     {
-
         assignedClue = clueSet;
         isTarget = targetState;
+
         ApplyAppearance(clueSet.appearance);
+        ApplyMouth(clueSet.mouth);
     }
 
     // ClueData.cs 참조
@@ -409,10 +434,83 @@ public class NPCController : MonoBehaviour
         }
     }
 
-    // 외형 전체 초기화 (숨기기)
+    //특정 입만 적용
+    public void ApplyMouth(MouthType mouthType)
+    {
+        // 혹시라도 TargetGenerator가 너무 빨리 불러서 배열이 안 만들어졌다면 즉시 생성!
+        InitAppearance();
+
+        if (mouthObjects == null || mouthObjects.Length == 0)
+        {
+            Debug.LogError("[에러] 강제 초기화를 시도했음에도 mouthObjects 배열이 비어있습니다!");
+            return;
+        }
+
+        int targetIndex = (int)mouthType - 1;
+        if (targetIndex < 0 || targetIndex >= mouthObjects.Length) targetIndex = 0;
+
+        for (int i = 0; i < mouthObjects.Length; i++)
+        {
+            if (mouthObjects[i] != null) mouthObjects[i].SetActive(false);
+        }
+
+        if (mouthObjects[targetIndex] != null)
+        {
+            mouthObjects[targetIndex].SetActive(true);
+        }
+    }
+
+    private void InitAppearance()
+    {
+        // 이미 배열이 만들어져 있다면 중복 실행 방지
+        if (mouthObjects != null && mouthObjects.Length == 10 && hatObjects != null && glassesObjects != null)
+            return;
+
+        hatObjects = new GameObject[5];
+        glassesObjects = new GameObject[5];
+        mouthObjects = new GameObject[10];
+
+        Transform headTransform = _animator != null ? _animator.GetBoneTransform(HumanBodyBones.Head) : null;
+
+        if (headTransform != null)
+        {
+            Transform[] allChildren = headTransform.GetComponentsInChildren<Transform>(true);
+
+            foreach (var child in allChildren)
+            {
+                for (int i = 0; i < 5; i++)
+                {
+                    if (child.name == $"Hat 0{i + 1}") hatObjects[i] = child.gameObject;
+                    if (child.name == $"Glasses 0{i + 1}") glassesObjects[i] = child.gameObject;
+                }
+
+                for (int i = 0; i < 10; i++)
+                {
+                    if (child.name == $"Mouth {(i + 1):D2}") mouthObjects[i] = child.gameObject;
+                }
+            }
+        }
+    }
+
+    // 외형 전체 초기화 (모자와 안경만 숨김. 입은 ApplyMouth에서 개별 관리하므로 제외)
     public void ResetAppearance()
     {
-        foreach (var hat in hatObjects) if (hat) hat.SetActive(false);
-        foreach (var glasses in glassesObjects) if (glasses) glasses.SetActive(false);
+        if (hatObjects != null)
+        {
+            foreach (var hat in hatObjects)
+            {
+                if (hat)
+                    hat.SetActive(false);
+            }
+        }
+
+        if (glassesObjects != null)
+        {
+            foreach (var glasses in glassesObjects)
+            {
+                if (glasses)
+                    glasses.SetActive(false);
+            }
+        }
     }
 }
