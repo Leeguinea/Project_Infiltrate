@@ -40,9 +40,11 @@ public enum MouthType
 // 2. 습관/행동 단서 (Animation Trigger)
 public enum HabitType
 {
-    SneezeEvery10s,     // 주기적으로 재채기함
-    CheckPhone,         // 스마트폰 확인함
-    Dance       // 춤
+    None,
+    Dance,        // 5종 중 랜덤하게 하나 선택
+    Exercise,     // 스트레칭 1종
+    PhoneTalking, // 통화 1종
+    SelfCheck     // 자기 점검 1종
 }
 
 // 3. 선호 장소 단서 (Zone Tag/Collider)
@@ -117,9 +119,10 @@ public static class ClueTextUtility
     {
         return type switch
         {
-            HabitType.SneezeEvery10s => "Habit: Sneezes periodically",
-            HabitType.CheckPhone => "Habit: Constantly checks phone",
-            HabitType.Dance => "Habit: Dancing",
+            HabitType.Dance => "Habit: Enjoys dancing frequently",
+            HabitType.Exercise => "Habit: Frequently does stretching exercises",
+            HabitType.PhoneTalking => "Habit: Constantly talking on the phone",
+            HabitType.SelfCheck => "Habit: Constantly checking self appearance",
             _ => string.Empty
         };
     }
