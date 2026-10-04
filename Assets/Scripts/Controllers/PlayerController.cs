@@ -56,6 +56,9 @@ public class PlayerController : MonoBehaviour
         // 암살 애니메이션 수행 중일 때는 모든 이동/조작 차단
         if (_isAssassinating) return;
 
+        //캐릭터 컨트롤러가 꺼져있다면 이동로직 아예 실행x 
+        if (characterController == null || !characterController.enabled) return;
+
         // NPC 심문/대화 UI가 켜져 있으면 탈출
         // (대화 중에는 암살, 시체 들기, 앉기, 이동 등 모든 조작을 막아야 하므로 최상단에 위치)
         if (AccuseSystem.Instance != null && AccuseSystem.Instance.IsInteracting)
@@ -448,6 +451,51 @@ public class PlayerController : MonoBehaviour
             _carryingEnemy.CarryBody(transform);
             Debug.Log("시체를 옮기는 중입니다.");
         }
+    }
+
+    // 기존의 짧은 Teleport 함수를 지우고 이 코드로 교체하세요!
+    public void Teleport(Vector3 targetPosition)
+    {
+        StartCoroutine(TeleportRoutine(targetPosition));
+    }
+
+    private IEnumerator TeleportRoutine(Vector3 targetPosition)
+    {
+        // 1. Rigidbody가 있다면 물리 간섭 차단
+        Rigidbody rb = GetComponent<Rigidbody>();
+        bool previousKinematic = false;
+        if (rb != null)
+        {
+            previousKinematic = rb.isKinematic;
+            rb.isKinematic = true;
+        }
+
+        // 2. CharacterController 끄기
+        if (characterController != null)
+        {
+            characterController.enabled = false;
+        }
+
+        // 3. 위치 강제 이동
+        transform.position = targetPosition;
+        Physics.SyncTransforms();
+
+        // 4. ★핵심: 물리 엔진이 새 위치를 온전히 인식할 때까지 딱 1프레임 대기
+        yield return null;
+
+        // 5. CharacterController 다시 켜기
+        if (characterController != null)
+        {
+            characterController.enabled = true;
+        }
+
+        // 6. Rigidbody 원상복구
+        if (rb != null)
+        {
+            rb.isKinematic = previousKinematic;
+        }
+
+        Debug.Log($"플레이어 텔레포트 완료: {targetPosition}");
     }
 }
 

@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1967070166969036640}
+  - component: {fileID: 4996791237553606258}
   m_Layer: 6
   m_Name: bip R UpperArm
   m_TagString: Untagged
@@ -32,6 +33,28 @@ Transform:
   - {fileID: 5978354000498936408}
   m_Father: {fileID: 5774042139856781067}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &4996791237553606258
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 336581079061512176}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &731242931996564049
 GameObject:
   m_ObjectHideFlags: 0
@@ -41,6 +64,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5346206165264370179}
+  - component: {fileID: 3874309980936375372}
   m_Layer: 6
   m_Name: bip L Foot
   m_TagString: Untagged
@@ -64,6 +88,28 @@ Transform:
   - {fileID: 3008138628340244227}
   m_Father: {fileID: 7018216169603140767}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &3874309980936375372
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 731242931996564049}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &1132541169728757276
 GameObject:
   m_ObjectHideFlags: 0
@@ -73,6 +119,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4623572855815274653}
+  - component: {fileID: 5197602663474582651}
   m_Layer: 6
   m_Name: bip R Finger0
   m_TagString: Untagged
@@ -96,6 +143,28 @@ Transform:
   - {fileID: 2443116184228416368}
   m_Father: {fileID: 917041154786227031}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &5197602663474582651
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1132541169728757276}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &1180660115364387089
 GameObject:
   m_ObjectHideFlags: 0
@@ -105,6 +174,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1937463153666018537}
+  - component: {fileID: 842465945407481090}
   m_Layer: 6
   m_Name: HandPosition
   m_TagString: Untagged
@@ -127,6 +197,28 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5339324808798515726}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &842465945407481090
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1180660115364387089}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &1252365642644042641
 GameObject:
   m_ObjectHideFlags: 0
@@ -136,6 +228,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8964469541608708212}
+  - component: {fileID: 4663964247110118343}
   m_Layer: 6
   m_Name: bip L UpperArm
   m_TagString: Untagged
@@ -159,6 +252,28 @@ Transform:
   - {fileID: 8251120583114133160}
   m_Father: {fileID: 1070478819446649856}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &4663964247110118343
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1252365642644042641}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &1451413051519235074
 GameObject:
   m_ObjectHideFlags: 0
@@ -168,6 +283,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1667336016176732413}
+  - component: {fileID: 2902109826980935165}
   m_Layer: 6
   m_Name: bip Pelvis
   m_TagString: Untagged
@@ -193,6 +309,28 @@ Transform:
   - {fileID: 986813615539009342}
   m_Father: {fileID: 2592194431166975755}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &2902109826980935165
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1451413051519235074}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &1826273707657363818
 GameObject:
   m_ObjectHideFlags: 0
@@ -202,6 +340,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 576856644876008992}
+  - component: {fileID: 2080563395801377192}
   m_Layer: 6
   m_Name: bip Neck
   m_TagString: Untagged
@@ -225,6 +364,28 @@ Transform:
   - {fileID: 902358260679668928}
   m_Father: {fileID: 9047368022226893967}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &2080563395801377192
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1826273707657363818}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &1994445367455330187
 GameObject:
   m_ObjectHideFlags: 0
@@ -234,6 +395,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2592194431166975755}
+  - component: {fileID: 8161792523734753580}
   m_Layer: 6
   m_Name: bip
   m_TagString: Untagged
@@ -257,6 +419,28 @@ Transform:
   - {fileID: 1667336016176732413}
   m_Father: {fileID: 5339324808798515726}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &8161792523734753580
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1994445367455330187}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &2111217360656890949
 GameObject:
   m_ObjectHideFlags: 0
@@ -266,6 +450,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 986813615539009342}
+  - component: {fileID: 3104365802304213117}
   m_Layer: 6
   m_Name: bip Spine
   m_TagString: Untagged
@@ -289,6 +474,28 @@ Transform:
   - {fileID: 9047368022226893967}
   m_Father: {fileID: 1667336016176732413}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &3104365802304213117
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2111217360656890949}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &2687681447770569151
 GameObject:
   m_ObjectHideFlags: 0
@@ -298,6 +505,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 860525596969301321}
+  - component: {fileID: 6311446610809559825}
   m_Layer: 6
   m_Name: bip R Calf
   m_TagString: Untagged
@@ -321,6 +529,28 @@ Transform:
   - {fileID: 1898173558542910197}
   m_Father: {fileID: 2148132827385419281}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &6311446610809559825
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2687681447770569151}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &3449327338505708743
 GameObject:
   m_ObjectHideFlags: 0
@@ -330,6 +560,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 917041154786227031}
+  - component: {fileID: 6909652087733227303}
   m_Layer: 6
   m_Name: bip R Hand
   m_TagString: Untagged
@@ -354,6 +585,28 @@ Transform:
   - {fileID: 3971655489746321656}
   m_Father: {fileID: 5978354000498936408}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &6909652087733227303
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3449327338505708743}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &3695034977734647350
 GameObject:
   m_ObjectHideFlags: 0
@@ -363,6 +616,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2443116184228416368}
+  - component: {fileID: 7458672607015548375}
   m_Layer: 6
   m_Name: bip R Finger01
   m_TagString: Untagged
@@ -385,6 +639,28 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4623572855815274653}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &7458672607015548375
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3695034977734647350}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &3732048778821551393
 GameObject:
   m_ObjectHideFlags: 0
@@ -394,6 +670,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8480344457627443955}
+  - component: {fileID: 1286422172612671007}
   m_Layer: 6
   m_Name: bip R Toe0
   m_TagString: Untagged
@@ -416,6 +693,28 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1898173558542910197}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &1286422172612671007
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3732048778821551393}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &3781550124770497273
 GameObject:
   m_ObjectHideFlags: 0
@@ -425,6 +724,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 902358260679668928}
+  - component: {fileID: 7659878591965286688}
   m_Layer: 6
   m_Name: bip Head
   m_TagString: Untagged
@@ -447,6 +747,28 @@ Transform:
   m_Children: []
   m_Father: {fileID: 576856644876008992}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &7659878591965286688
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3781550124770497273}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &3835489044395559186
 GameObject:
   m_ObjectHideFlags: 0
@@ -456,6 +778,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3008138628340244227}
+  - component: {fileID: 2945517340556170973}
   m_Layer: 6
   m_Name: bip L Toe0
   m_TagString: Untagged
@@ -478,6 +801,28 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5346206165264370179}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &2945517340556170973
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3835489044395559186}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &4146594200490354077
 GameObject:
   m_ObjectHideFlags: 0
@@ -487,6 +832,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3971655489746321656}
+  - component: {fileID: 2431090925912933649}
   m_Layer: 6
   m_Name: bip R Finger1
   m_TagString: Untagged
@@ -510,6 +856,28 @@ Transform:
   - {fileID: 7225067388783987826}
   m_Father: {fileID: 917041154786227031}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &2431090925912933649
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4146594200490354077}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &4387937620505800841
 GameObject:
   m_ObjectHideFlags: 0
@@ -519,6 +887,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9047368022226893967}
+  - component: {fileID: 2377475400564823049}
   m_Layer: 6
   m_Name: bip Spine1
   m_TagString: Untagged
@@ -544,6 +913,28 @@ Transform:
   - {fileID: 5774042139856781067}
   m_Father: {fileID: 986813615539009342}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &2377475400564823049
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4387937620505800841}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &4673187294949953399
 GameObject:
   m_ObjectHideFlags: 0
@@ -553,6 +944,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3481945478797891994}
+  - component: {fileID: 7958745829809241072}
   m_Layer: 6
   m_Name: bip L Hand
   m_TagString: Untagged
@@ -577,6 +969,28 @@ Transform:
   - {fileID: 3829392876356832160}
   m_Father: {fileID: 8251120583114133160}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &7958745829809241072
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4673187294949953399}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &4716869531049798997
 GameObject:
   m_ObjectHideFlags: 0
@@ -586,6 +1000,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5774042139856781067}
+  - component: {fileID: 117248491616601044}
   m_Layer: 6
   m_Name: bip R Clavicle
   m_TagString: Untagged
@@ -609,6 +1024,28 @@ Transform:
   - {fileID: 1967070166969036640}
   m_Father: {fileID: 9047368022226893967}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &117248491616601044
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4716869531049798997}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &5411270729696453536
 GameObject:
   m_ObjectHideFlags: 0
@@ -618,6 +1055,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7770539720196383333}
+  - component: {fileID: 4461263811085991155}
   m_Layer: 6
   m_Name: bip L Finger11
   m_TagString: Untagged
@@ -640,6 +1078,28 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3829392876356832160}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &4461263811085991155
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5411270729696453536}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &5526441715197280428
 GameObject:
   m_ObjectHideFlags: 0
@@ -649,6 +1109,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5978354000498936408}
+  - component: {fileID: 1074262936062620376}
   m_Layer: 6
   m_Name: bip R Forearm
   m_TagString: Untagged
@@ -672,6 +1133,28 @@ Transform:
   - {fileID: 917041154786227031}
   m_Father: {fileID: 1967070166969036640}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &1074262936062620376
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5526441715197280428}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &6387261437057919418
 GameObject:
   m_ObjectHideFlags: 0
@@ -681,6 +1164,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5339324808798515726}
+  - component: {fileID: 4022482520021689502}
   m_Layer: 6
   m_Name: rig_CharRoot
   m_TagString: Player
@@ -705,6 +1189,28 @@ Transform:
   - {fileID: 2592194431166975755}
   m_Father: {fileID: 7885967204657142976}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &4022482520021689502
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6387261437057919418}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &6729363406070471550
 GameObject:
   m_ObjectHideFlags: 0
@@ -716,6 +1222,7 @@ GameObject:
   - component: {fileID: 2771702508174880642}
   - component: {fileID: 4571920452598307286}
   - component: {fileID: 2889935773511846264}
+  - component: {fileID: 8570583443229096038}
   m_Layer: 6
   m_Name: ItemDetectTrigger
   m_TagString: Player
@@ -771,6 +1278,28 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.5, y: 1.15, z: 0.95}
   m_Center: {x: 0, y: 0.82, z: 0.39}
+--- !u!64 &8570583443229096038
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6729363406070471550}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &6828619538253049467
 GameObject:
   m_ObjectHideFlags: 0
@@ -780,6 +1309,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3829392876356832160}
+  - component: {fileID: 2576998026016068653}
   m_Layer: 6
   m_Name: bip L Finger1
   m_TagString: Untagged
@@ -803,6 +1333,28 @@ Transform:
   - {fileID: 7770539720196383333}
   m_Father: {fileID: 3481945478797891994}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &2576998026016068653
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6828619538253049467}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &6841375166941831255
 GameObject:
   m_ObjectHideFlags: 0
@@ -812,6 +1364,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1898173558542910197}
+  - component: {fileID: 4693864915242781619}
   m_Layer: 6
   m_Name: bip R Foot
   m_TagString: Untagged
@@ -835,6 +1388,28 @@ Transform:
   - {fileID: 8480344457627443955}
   m_Father: {fileID: 860525596969301321}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &4693864915242781619
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6841375166941831255}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &7088069391898837667
 GameObject:
   m_ObjectHideFlags: 0
@@ -844,6 +1419,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5499188379469781494}
+  - component: {fileID: 3267296706645081804}
   m_Layer: 6
   m_Name: bip L Thigh
   m_TagString: Untagged
@@ -867,6 +1443,28 @@ Transform:
   - {fileID: 7018216169603140767}
   m_Father: {fileID: 1667336016176732413}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &3267296706645081804
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7088069391898837667}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &7390784292082246191
 GameObject:
   m_ObjectHideFlags: 0
@@ -885,6 +1483,7 @@ GameObject:
   - component: {fileID: 127818000818427068}
   - component: {fileID: 399827201189352977}
   - component: {fileID: 3123049351753786932}
+  - component: {fileID: 6869247398092645577}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -1074,7 +1673,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7390784292082246191}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1ea3f1a8ee2254e46ab1e972db0b63ef, type: 3}
   m_Name: 
@@ -1082,9 +1681,24 @@ MonoBehaviour:
   slotParent: {fileID: 0}
   inventoryPanel: {fileID: 0}
   selectionHighlight: {fileID: 0}
-  slotTransforms: []
-  slotCapacity: 20
-  slots: []
+  slotTransforms:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  slotCapacity: 19
+  slots:
+  - itemType: 0
+    count: 0
+  - itemType: 0
+    count: 0
+  - itemType: 0
+    count: 0
+  - itemType: 0
+    count: 0
+  - itemType: 0
+    count: 0
 --- !u!114 &3123049351753786932
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1108,6 +1722,28 @@ MonoBehaviour:
   _yesButton: {fileID: 0}
   _noButton: {fileID: 0}
   _maxStrikes: 2
+--- !u!64 &6869247398092645577
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7390784292082246191}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &7542271621023766609
 GameObject:
   m_ObjectHideFlags: 0
@@ -1117,6 +1753,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7225067388783987826}
+  - component: {fileID: 9007129915990271274}
   m_Layer: 6
   m_Name: bip R Finger11
   m_TagString: Untagged
@@ -1139,6 +1776,28 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3971655489746321656}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &9007129915990271274
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7542271621023766609}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &7588143280030200772
 GameObject:
   m_ObjectHideFlags: 0
@@ -1148,6 +1807,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1070478819446649856}
+  - component: {fileID: 4907846339062065592}
   m_Layer: 6
   m_Name: bip L Clavicle
   m_TagString: Untagged
@@ -1171,6 +1831,28 @@ Transform:
   - {fileID: 8964469541608708212}
   m_Father: {fileID: 9047368022226893967}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &4907846339062065592
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7588143280030200772}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &7623866017151345913
 GameObject:
   m_ObjectHideFlags: 0
@@ -1181,6 +1863,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1692126944543242787}
   - component: {fileID: 2765209647525005848}
+  - component: {fileID: 8028702742659985235}
   m_Layer: 6
   m_Name: casual_Female_G
   m_TagString: Player
@@ -1292,6 +1975,28 @@ SkinnedMeshRenderer:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0.8674813, y: 0.22051503, z: 0.7852975}
   m_DirtyAABB: 0
+--- !u!64 &8028702742659985235
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7623866017151345913}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &7833857312065236654
 GameObject:
   m_ObjectHideFlags: 0
@@ -1301,6 +2006,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6924787890314036789}
+  - component: {fileID: 1037771388669848555}
   m_Layer: 6
   m_Name: bip L Finger0
   m_TagString: Untagged
@@ -1324,6 +2030,28 @@ Transform:
   - {fileID: 7305259459643815345}
   m_Father: {fileID: 3481945478797891994}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &1037771388669848555
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7833857312065236654}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &8044017219590439669
 GameObject:
   m_ObjectHideFlags: 0
@@ -1333,6 +2061,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2148132827385419281}
+  - component: {fileID: 6650330835679009665}
   m_Layer: 6
   m_Name: bip R Thigh
   m_TagString: Untagged
@@ -1356,6 +2085,28 @@ Transform:
   - {fileID: 860525596969301321}
   m_Father: {fileID: 1667336016176732413}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &6650330835679009665
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8044017219590439669}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &8665050929933347403
 GameObject:
   m_ObjectHideFlags: 0
@@ -1365,6 +2116,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8251120583114133160}
+  - component: {fileID: 560238999651861519}
   m_Layer: 6
   m_Name: bip L Forearm
   m_TagString: Untagged
@@ -1388,6 +2140,28 @@ Transform:
   - {fileID: 3481945478797891994}
   m_Father: {fileID: 8964469541608708212}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &560238999651861519
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8665050929933347403}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &8835014639246193899
 GameObject:
   m_ObjectHideFlags: 0
@@ -1397,6 +2171,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7018216169603140767}
+  - component: {fileID: 3265918900183279141}
   m_Layer: 6
   m_Name: bip L Calf
   m_TagString: Untagged
@@ -1420,6 +2195,28 @@ Transform:
   - {fileID: 5346206165264370179}
   m_Father: {fileID: 5499188379469781494}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &3265918900183279141
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8835014639246193899}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &8999821934566428849
 GameObject:
   m_ObjectHideFlags: 0
@@ -1429,6 +2226,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7305259459643815345}
+  - component: {fileID: 1447846547661281418}
   m_Layer: 6
   m_Name: bip L Finger01
   m_TagString: Untagged
@@ -1451,3 +2249,25 @@ Transform:
   m_Children: []
   m_Father: {fileID: 6924787890314036789}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &1447846547661281418
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8999821934566428849}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
