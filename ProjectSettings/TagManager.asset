@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Enemy
   - Unconscious
+  - NPC
   layers:
   - Default
   - TransparentFX
